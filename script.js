@@ -61,7 +61,7 @@ function closeModal() {
 document.addEventListener("DOMContentLoaded", () => {
   const profiles = [
     {
-      imgSrc: "../images/정.png",
+      imgSrc: "images/정.png",
       name: "정도영",
       position: "CEO",
       bio: [
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ],
     },
     {
-      imgSrc: "../images/park.png",
+      imgSrc: "images/park.png",
       name: "박무경",
       position: "CTO",
       bio: [
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ],
     },
     {
-      imgSrc: "../images/임.png",
+      imgSrc: "images/임.png",
       name: "임현진",
       position: "Designer",
       bio: [
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ],
     },
     {
-      imgSrc: "../images/전.png",
+      imgSrc: "images/전.png",
       name: "전현진",
       position: "QA/QC",
       bio: [
