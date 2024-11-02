@@ -1,118 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <title>Mapping</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-    <title>Three Column Portfolio Template for Bootstrap 3</title>
+</head>
 
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+<body>
+    <header>
+        <div class="container">
+            <h1>
+                <img src="../images/mapping2.png" alt="플로팅 로고" class="logo">
+            </h1>
 
-    <!-- Custom CSS for the '3 Col Portfolio' Template -->
-    <link href="css/3-col-portfolio.css" rel="stylesheet">
-  </head>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#main"><button>Home</button></a>
+                    </li>
+                    <li>
+                        <a href="#portfolio"><button>Service</button></a>
+                    </li>
+                    <li>
+                        <a href="#about"><button>About</button></a>
+                    </li>
+                    <li>
+                        <a href="#team"><button>Team</button></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="download-container">
+                <button class="download-btn">Download</button>
+            </div>
+        </div>
+    </header>
 
-  <body>
+    <main id="main">
+        <div class="container">
+            <h4>색다른 로컬 여행의 모든것,</h4>
+            <h2><span>새로운 경험이 시작되는<br>로컬 여행 플랫폼</span></h2>
+            <p>맵핑은 커뮤니티, 큐레이팅, 맞춤형 여행 수립 및 관리, AI기반화 서비스 개인 맞춤형 여행 계획 프로세스를 제공하고, 현지인 중심의 다채롭고, 세부적인 로컬 콘텐츠를 소개합니다!</p>
+            <button class="mouse"><i class="fa-solid fa-angle-down"></i></button>
 
-    <nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="http://startbootstrap.com">Start Bootstrap</a>
+            <div class="button-container">
+                <button class="download-button ios"><i class="fa-brands fa-apple"></i>Dowanload for ios</button>
+                <button class="download-button android"><i class="fa-brands fa-android"></i>Dowanload for
+                    Android</button>
+            </div>
         </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container -->
-    </nav>
 
-    <div class="container">
+        <img src="../images/website.png" alt="웹사이트">
 
-      <div class="row">
 
-        <div class="col-lg-12">
-          <h1 class="page-header">3 Col Portfolio <small>Showcase Your Work</small></h1>
+    </main>
+
+    <section id='explain' class="explain">
+        <div class="container">
+            <p>로컬 여행의 모든 순간을 한눈에 조회해 보세요.<br>
+                우리가 알지못했던 새로운 로컬 여행 플랫폼,<br>
+                맵핑과 함께라면 당신의 일상이 새로워질거에요.</p>
+        </div>
+    </section>
+
+
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+
+            <div class="ptitle">
+                <p class="hidden">커뮤니티, 큐레이팅, 맞춤형 여행 계획 수립 및 관리, AI 기반화 서비스까지</p>
+            </div>
+            <div class="title2">
+                <h2 class="hidden">개인 맞춤형 여행 계획 Process</h2>
+            </div>
+            <div class="portfolio-me">
+                <div class="portfolio-inner">
+                    <img src="../images/service.png" alt="서비스" onclick="openModal(this)">
+                    <strong>맞춤형 여행 계획 수립&관리</strong>
+                    <h3>장소 큐레이팅 AI챗봇 서비스와 사용자 맞춤형 컨텐츠 제공</h3>
+                </div>
+                <div class="portfolio-inner">
+                    <img src="../images/service2.png" alt="서비스2" onclick="openModal(this)">
+                    <strong>여행 정보 공유, 커뮤니티 기능</strong>
+                    <h3>실시간으로 여행 정보를 공유하고, 여행 플랜 포스팅 작성</h3>
+                </div>
+                <div class="portfolio-inner">
+                    <img src="../images/service.png" alt="서비스3" onclick="openModal(this)">
+                    <strong>맞춤형 여행 계획 수립&관리</strong>
+                    <h3>장소 큐레이팅 AI챗봇 서비스와 사용자 맞춤형 컨텐츠 제공</h3>
+                </div>
+
+            </div>
         </div>
 
-      </div>
-
-      <div class="row">
-
-        <div class="col-md-4 portfolio-item">
-          <a href="#project-link"><img class="img-responsive" src="http://placehold.it/700x400"></a>
-          <h3><a href="#project-link">Project Name</a></h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+        <div id="imageModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="modalImg">
         </div>
+    </section>
 
-        <div class="col-md-4 portfolio-item">
-          <a href="#project-link"><img class="img-responsive" src="http://placehold.it/700x400"></a>
-          <h3><a href="#project-link">Project Name</a></h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+    <section id="about" class="about">
+        <div class="container" style="width: 1140px; margin: 0 auto;">
+            
+                <video width="100%" controls>
+                    <source src="../images/movie.mp4" type="video/mp4">
+                </video>
+            
         </div>
+    </section>
 
-        <div class="col-md-4 portfolio-item">
-          <a href="#project-link"><img class="img-responsive" src="http://placehold.it/700x400"></a>
-          <h3><a href="#project-link">Project Name</a></h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+
+
+
+    <section id="team" class="team">
+        <div class="container">
+            <div class="title2">
+                <h3>각자 분야에 대한 뛰어난 이해도와 강한 리더십을 기반으로</h3>
+                <h2>매 순간 성장하며 앞으로 나아가는 플로팅</h2>
+            </div>
+            <div class="testimonial-wrapper">
+                <i class="fa-solid fa-arrow-left arrow" id="prev"></i>
+                <div class="testimonial">
+                    <div class="testimonial-img">
+                        <img src="../images/정.png" alt="도영이미지" id = "profile-img">
+                    </div>
+                    <div class="testimonial-content">
+                        <p class="author">
+                            <strong class="name" id ="profile-name">정도영</strong>
+                            <span class="position" id = "profile-position">CEO</span>
+                        </p>
+                        <div id ="profile-bio">
+                            <p>농촌진흥청 공공데이터 활용 예비창업 프로젝트 팀장</p>
+                            <p>2018~2019 부산국제광고제 C.C본선</p>
+                            <p>2024 농림축산식품부 공공데이터활용 창업경진대회 3위</p>
+                            <p>2024 제2회 제6보병사단 창업경진대회 1위</p>
+                            <p>농정원 "창업표준 프로세스"등 다수 정규 교육과정 수료</p>
+                        </div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow" id="next"></i>
+            </div>
         </div>
+    </section>
+    
 
-      </div>
 
-      <hr>
 
-      <div class="row text-center">
-        
-        <div class="col-lg-12">
-          <ul class="pagination">
-            <li><a href="#">&laquo;</a></li>
-            <li class="active"><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">&raquo;</a></li>
-          </ul>        
-        </div>
-
-      </div>
-
-    </div><!-- /.container -->
-
-    <div class="container">
-
-      <hr>
-
-      <footer>
-        <div class="row">
-          <div class="col-lg-12">
-            <p>Copyright &copy; Company <span id="getCurrentDate"></span></p>
-          </div>
-        </div>
-      </footer>
-      
-    </div><!-- /.container -->
-
-    <!-- JavaScript -->
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script type="text/javascript">
-      var dt = new Date();
-      document.getElementById('getCurrentDate').innerHTML = dt.getFullYear();
-    </script>
-  </body>
+    <script src="script.js"></script>
+</body>
 
 </html>
