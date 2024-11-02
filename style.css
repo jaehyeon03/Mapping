@@ -1,0 +1,541 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Pretendard", sans-serif;
+}
+
+a,
+a:link,
+a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+.container {
+    width: 1140px;
+    margin: 0 auto;
+}
+
+/*header*/
+.logo {
+    width: 130px;
+    height: auto    ;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 150px;
+}
+
+header {
+    position: fixed;
+    color: white;
+    top: 0;
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+
+header h1 {
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+header button {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    color: white;
+}
+
+header nav{
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+header nav ul {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+header nav ul li {
+    padding: 10px;
+}
+
+header nav ul li button {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #495057;
+}
+
+
+header.active {
+    background-color: white;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+header .download-container{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.download-btn {
+    background-color: #20123d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid black;
+    margin-right: 130px;
+}
+
+.download-btn:hover {
+    background-color: white;
+    color: black;
+}
+
+/* main */
+
+main {
+    width: 100%;
+    height: 100vh;
+    color: black;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+    gap: 10px;
+
+}
+
+main .container{
+    text-align: left;
+    width: 40%;
+}
+
+
+main h4 {
+    font-size: 1.5rem;
+    margin-bottom: 9px;
+}
+main h2{
+    font-size: 3rem;
+}
+
+
+main img{
+    width: 40%;
+    
+    height: auto;
+    object-fit: cover;
+    margin-top: 2rem;
+    margin-right: 4rem;
+}
+
+main p {
+    max-width: 500px;
+    font-size: 1.25rem;
+    color: black;
+    margin-top: 2.3rem;
+    margin-bottom: 2.7rem;
+}
+
+main.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+main .button-container{
+    display: flex;
+    gap: 1rem;
+
+}
+.download-button {
+    background-color: #000;
+    color: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: 2px solid #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.download-button.ios {
+    background-color: #20123d;
+    color: #fff;
+}
+
+.download-button.android {
+    background-color: #20123d;
+    color: #fff;
+}
+
+.download-button:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+main button.mouse {
+    background-color: transparent;
+    border: none;
+    color: #495057;
+    font-size: 2rem;
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: upDown 1s ease-in-out infinite;
+    cursor: pointer;
+}
+
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+
+}
+
+@keyframes upDown {
+    0% {
+        bottom: 1rem;
+    }
+
+    50% {
+        bottom: 1.5rem;
+    }
+
+    100% {
+        bottom: 1rem;
+    }
+}
+
+/* explain */
+
+.explain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.explain p {
+    font-weight: bold;
+    word-wrap: break-word;
+    text-align: center;
+    font-size: 2em;
+    color: #333;
+    line-height: 1.6;
+}
+
+/*service*/
+
+
+#portfolio{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: center;
+}
+
+
+section .portfolio::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.ptitle{
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.title2 {
+    margin-bottom: 150px;
+    font-size: 2rem;
+    color: #000;
+    
+}
+
+.hidden{
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.visible{
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.portfolio-me {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    margin-right: 30px;
+    width: 100;
+}
+
+.portfolio-inner {
+    position:relative;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.portfolio-inner img {
+    width: 120%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.portfolio-inner strong {
+    font-size: 1.25rem;
+    color: black;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.portfolio-inner h3 {
+    font-size: 1rem;
+    color: #495057;
+    line-height: 1.5;
+    margin-bottom: 40px;
+}
+
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9); 
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 100%;
+    max-width: 700px;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.modal-content, .close {
+    -webkit-animation-name: zoom;
+    -webkit-animation-duration: 0.6s;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
+
+@keyframes zoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
+
+/*
+about
+*/
+
+
+#about {
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 110vh;
+    
+}
+
+
+#about video {
+    width: 100%;
+    border-radius: 10px;
+}
+
+
+
+/*
+team
+*/
+
+#team {
+    width: 100%;
+    height: 80vh;
+}
+.team .title2 h2{
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.team .title2 h3{
+    text-align: center;
+    margin-top: 100px;
+    font-weight: 400;
+    color: #495057;;
+}
+.testimonial {
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+    text-align: left;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1);
+    width: 750px;
+    margin-left: 100px;
+    margin-right: 100px;
+    
+}
+
+.testimonial-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* testimonial과 화살표 사이의 간격 */
+}
+
+
+.testimonial-img {
+    flex: 0 0 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.testimonial-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.testimonial-content p {
+    margin: 0 0 2px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.name{
+    margin-right: 3px;
+}
+
+.testimonial-content .author {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.testimonial-content .author strong {
+    font-size: 23px;
+    color: #333;
+}
+
+.arrow {
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.arrow:hover {
+    color: rgb(140, 72, 193); 
+}
+
+
+section .title{
+    margin-bottom: 3rem;
+}
+section .title h4{
+    font-size: 1.35rem;
+    color: rgb(25, 25, 25);
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+section .title h2{
+    font-size: 3rem;
+    font-weight: 500;
+}
+section .title p{
+    font-size: 1.15rem;
+}
