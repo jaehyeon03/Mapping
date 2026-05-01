@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>알림 색상과 중요도 회상 실험</title>
+
+  <!-- CSS 연결 -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 전체 앱 컨테이너 -->
+  <main class="app">
+
+    <!-- 시작 화면 -->
+    <section id="startScreen" class="screen active">
+      <div class="card intro-card">
+        <p class="eyebrow">HCI Recall Experiment</p>
+        <h1>알림 색상과 정보 중요도가<br />사용자 회상에 미치는 영향</h1>
+
+        <p class="description">
+          본 실험은 2048 게임을 수행하는 동안 화면에 제시되는 알림을
+          사용자가 실험 종료 후 얼마나 기억하는지 측정하기 위한 웹 기반 프로토타입입니다.
+        </p>
+
+        <!-- 참가자 기본 정보 입력 -->
+        <form id="participantForm" class="form">
+          <label>
+            참가자 ID
+            <input type="text" id="participantId" placeholder="예: 김재현" required />
+          </label>
+
+          <label>
+            나이
+            <input type="number" id="age" min="18" max="80" placeholder="예: 24" required />
+          </label>
+
+          <label>
+            성별
+            <select id="gender" required>
+              <option value="">선택</option>
+              <option value="남성">남성</option>
+              <option value="여성">여성</option>
+              <option value="응답하지 않음">응답하지 않음</option>
+            </select>
+          </label>
+
+          <button type="submit" class="primary-btn">실험 시작하기</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 실험 화면 -->
+    <section id="experimentScreen" class="screen">
+      <header class="experiment-header">
+        <div>
+          <p class="eyebrow">Main Task</p>
+          <h2>2048 게임 수행</h2>
+        </div>
+
+        <div class="status-panel">
+          <div>
+            <span>남은 시간</span>
+            <strong id="timer">05:00</strong>
+          </div>
+          <div>
+            <span>점수</span>
+            <strong id="score">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <!-- 게임 영역 -->
+      <section class="game-layout">
+        <div class="game-card">
+          <div id="board" class="board"></div>
+
+          <!-- 모바일 조작 버튼 -->
+          <div class="control-pad">
+            <button id="upBtn">▲</button>
+            <div>
+              <button id="leftBtn">◀</button>
+              <button id="downBtn">▼</button>
+              <button id="rightBtn">▶</button>
+            </div>
+          </div>
+
+          <p class="game-guide">
+            키보드 방향키 또는 화면 버튼으로 이동하세요.
+            게임 중 알림이 나타나면 읽고 기억해 주세요.
+          </p>
+        </div>
+      </section>
+
+      <!-- 웹 앱 내부 알림 -->
+      <div id="notificationToast" class="notification-toast hidden">
+        <div class="toast-content">
+          <p id="toastImportance" class="toast-importance"></p>
+          <p id="toastMessage" class="toast-message"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 회상 설문 화면 -->
+    <section id="surveyScreen" class="screen">
+      <div class="card survey-card">
+        <p class="eyebrow">Post Recall Survey</p>
+        <h2>사후 회상 설문</h2>
+
+        <p class="description">
+          방금 게임 중 나타났던 알림을 얼마나 기억하는지 응답해 주세요.
+          정확한 문장이 아니어도 기억나는 내용을 자유롭게 적으면 됩니다.
+        </p>
+
+        <form id="recallForm" class="survey-form">
+          <div id="surveyList"></div>
+
+          <button type="submit" class="primary-btn">결과 저장하기</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 결과 화면 -->
+    <section id="resultScreen" class="screen">
+      <div class="card result-card">
+        <p class="eyebrow">Experiment Complete</p>
+        <h2>실험이 종료되었습니다.</h2>
+
+        <p class="description">
+          아래 버튼을 눌러 실험 데이터를 CSV 파일로 저장할 수 있습니다.
+          CSV에는 알림 색상, 중요도, 실제 알림 내용, 회상 응답, 만족도 등이 포함됩니다.
+        </p>
+
+        <div id="summaryBox" class="summary-box"></div>
+
+        <button id="downloadCsvBtn" class="primary-btn">CSV 다운로드</button>
+        <button id="restartBtn" class="secondary-btn">처음으로 돌아가기</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- JS 연결 -->
+  <script src="app.js"></script>
+</body>
+</html>
