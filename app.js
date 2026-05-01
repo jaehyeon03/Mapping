@@ -436,8 +436,9 @@ function moveDown() {
 function afterMove(oldBoard) {
   const newBoard = JSON.stringify(board);
 
+  // 보드가 실제로 움직였을 때만 점수 증가
   if (oldBoard !== newBoard) {
-    score = Math.min(score + 1, MAX_SCORE);
+    score += 1;
 
     addRandomTile();
     renderBoard();
