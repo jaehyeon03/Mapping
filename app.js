@@ -13,8 +13,8 @@
    실험 설정값
    ============================== */
 
-// 실제 실험은 5분 = 300초
-const EXPERIMENT_SECONDS = 300;
+// 게임 시간: 3분 = 180초
+const EXPERIMENT_SECONDS = 180;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
@@ -24,7 +24,6 @@ const NOTIFICATION_VISIBLE_MS = 5000;
 const NOTIFICATION_COUNT = 18;
 
 // 알림 제시 최소/최대 시점
-// 시작 직후와 종료 직전은 피하기 위해 범위 설정
 const MIN_NOTIFICATION_TIME = 12;
 const MAX_NOTIFICATION_TIME = EXPERIMENT_SECONDS - 15;
 
@@ -62,7 +61,7 @@ let participantInfo = {};
 let notificationSchedule = [];
 let shownNotifications = [];
 let surveyResponses = [];
-let mergedPositions = [];
+
 let experimentTimer = null;
 let experimentStartTime = null;
 let remainingSeconds = EXPERIMENT_SECONDS;
@@ -73,12 +72,14 @@ let remainingSeconds = EXPERIMENT_SECONDS;
 
 let board = [];
 let score = 0;
-let touchStartX = 0;
-let touchStartY = 0;
+let mergedPositions = [];
+
+let pointerStartX = 0;
+let pointerStartY = 0;
+let isPointerDown = false;
 
 /* ==============================
    알림 문구 데이터
-   실제 연구에서는 사전 중요도 설문 후 문구를 확정하는 것을 권장
    ============================== */
 
 const highImportanceMessages = [
@@ -197,7 +198,6 @@ function createNotificationSchedule() {
 
   let baseConditions = [];
 
-  // 색상 3개 x 중요도 2개 x 반복 3회
   for (let repeat = 0; repeat < 3; repeat++) {
     colors.forEach((color) => {
       importanceLevels.forEach((importance) => {
@@ -211,15 +211,13 @@ function createNotificationSchedule() {
 
   baseConditions = shuffleArray(baseConditions).slice(0, NOTIFICATION_COUNT);
 
-  // 알림이 뜰 시간을 랜덤 생성
   const randomTimes = [];
 
   while (randomTimes.length < baseConditions.length) {
-    const time = Math.floor(
-      Math.random() * (MAX_NOTIFICATION_TIME - MIN_NOTIFICATION_TIME + 1)
-    ) + MIN_NOTIFICATION_TIME;
+    const time =
+      Math.floor(Math.random() * (MAX_NOTIFICATION_TIME - MIN_NOTIFICATION_TIME + 1)) +
+      MIN_NOTIFICATION_TIME;
 
-    // 너무 가까운 시간에 알림이 겹치지 않도록 8초 이상 간격 유지
     const isFarEnough = randomTimes.every((t) => Math.abs(t - time) >= 8);
 
     if (isFarEnough) {
@@ -323,6 +321,8 @@ function renderBoard() {
 
       if (value > 0) {
         tile.textContent = value;
+
+        // 2048보다 큰 숫자도 오류 없이 표시되도록 기본 클래스는 유지
         tile.classList.add(`tile-${value}`);
 
         const isMerged = mergedPositions.some(
@@ -355,26 +355,26 @@ function addRandomTile() {
   if (emptyCells.length === 0) return;
 
   const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+  // 실제 2048 규칙: 새 타일은 보통 2, 낮은 확률로 4
   board[randomCell.r][randomCell.c] = Math.random() < 0.9 ? 2 : 4;
 }
 
 /* ==============================
-   2048 실제 게임 규칙 적용 로직
+   2048 실제 게임 규칙
    ============================== */
 
 /*
-  한 줄을 2048 규칙에 따라 이동/병합하는 함수
+  핵심 규칙:
+  1. 0은 먼저 제거한다.
+  2. 이동 방향 기준으로 앞에서부터 같은 숫자만 합친다.
+  3. 한 번 합쳐진 타일은 같은 이동에서 다시 합쳐지지 않는다.
+  4. 점수는 합쳐져서 만들어진 숫자만큼만 증가한다.
 
   예시:
-  [2, 0, 2, 2]
-  → 0 제거: [2, 2, 2]
-  → 앞에서부터 같은 숫자 병합: [4, 2]
-  → 빈칸 채우기: [4, 2, 0, 0]
-
-  반환값:
-  - line: 병합 후 한 줄
-  - gainedScore: 이번 줄에서 얻은 점수
-  - mergedIndexes: 합쳐진 타일의 결과 위치
+  [2, 0, 2, 2] -> [4, 2, 0, 0], 점수 +4
+  [2, 2, 2, 2] -> [4, 4, 0, 0], 점수 +8
+  [2, 4, 8, 0] -> [2, 4, 8, 0], 점수 +0
 */
 function mergeLine(line) {
   const numbers = line.filter((value) => value !== 0);
@@ -384,19 +384,20 @@ function mergeLine(line) {
   let gainedScore = 0;
 
   for (let i = 0; i < numbers.length; i++) {
-    if (i < numbers.length - 1 && numbers[i] === numbers[i + 1]) {
-      const mergedValue = numbers[i] * 2;
+    const current = numbers[i];
+    const next = numbers[i + 1];
+
+    if (current === next) {
+      const mergedValue = current * 2;
 
       newLine.push(mergedValue);
       gainedScore += mergedValue;
-
-      // 합쳐진 타일의 최종 위치 저장
       mergedIndexes.push(newLine.length - 1);
 
-      // 다음 숫자는 이미 합쳐졌으므로 건너뜀
+      // 다음 타일은 이미 합쳐졌으므로 건너뜀
       i++;
     } else {
-      newLine.push(numbers[i]);
+      newLine.push(current);
     }
   }
 
@@ -411,162 +412,183 @@ function mergeLine(line) {
   };
 }
 
-/* 왼쪽 이동 */
-function moveLeft() {
-  const oldBoard = JSON.stringify(board);
-  let totalGainedScore = 0;
-
-  mergedPositions = [];
-
-  board = board.map((row, rowIndex) => {
-    const result = mergeLine(row);
-
-    totalGainedScore += result.gainedScore;
-
-    result.mergedIndexes.forEach((colIndex) => {
-      mergedPositions.push({
-        row: rowIndex,
-        col: colIndex
-      });
-    });
-
-    return result.line;
-  });
-
-  afterMove(oldBoard, totalGainedScore);
+function cloneBoard(targetBoard) {
+  return targetBoard.map((row) => [...row]);
 }
 
-/* 오른쪽 이동 */
-function moveRight() {
-  const oldBoard = JSON.stringify(board);
-  let totalGainedScore = 0;
-
-  mergedPositions = [];
-
-  board = board.map((row, rowIndex) => {
-    const reversedRow = [...row].reverse();
-    const result = mergeLine(reversedRow);
-
-    totalGainedScore += result.gainedScore;
-
-    result.mergedIndexes.forEach((reversedColIndex) => {
-      mergedPositions.push({
-        row: rowIndex,
-        col: 3 - reversedColIndex
-      });
-    });
-
-    return result.line.reverse();
-  });
-
-  afterMove(oldBoard, totalGainedScore);
-}
-
-/* 위쪽 이동 */
-function moveUp() {
-  const oldBoard = JSON.stringify(board);
-  let totalGainedScore = 0;
-
-  mergedPositions = [];
-
-  for (let col = 0; col < 4; col++) {
-    const column = board.map((row) => row[col]);
-    const result = mergeLine(column);
-
-    totalGainedScore += result.gainedScore;
-
-    result.mergedIndexes.forEach((rowIndex) => {
-      mergedPositions.push({
-        row: rowIndex,
-        col: col
-      });
-    });
-
-    for (let row = 0; row < 4; row++) {
-      board[row][col] = result.line[row];
-    }
-  }
-
-  afterMove(oldBoard, totalGainedScore);
-}
-
-/* 아래쪽 이동 */
-function moveDown() {
-  const oldBoard = JSON.stringify(board);
-  let totalGainedScore = 0;
-
-  mergedPositions = [];
-
-  for (let col = 0; col < 4; col++) {
-    const reversedColumn = board.map((row) => row[col]).reverse();
-    const result = mergeLine(reversedColumn);
-
-    totalGainedScore += result.gainedScore;
-
-    result.mergedIndexes.forEach((reversedRowIndex) => {
-      mergedPositions.push({
-        row: 3 - reversedRowIndex,
-        col: col
-      });
-    });
-
-    const newColumn = result.line.reverse();
-
-    for (let row = 0; row < 4; row++) {
-      board[row][col] = newColumn[row];
-    }
-  }
-
-  afterMove(oldBoard, totalGainedScore);
-}
-
-/* 이동 후 처리 */
-function afterMove(oldBoard, gainedScore) {
-  const newBoard = JSON.stringify(board);
-
-  // 보드가 실제로 변했을 때만 새 타일 추가
-  if (oldBoard !== newBoard) {
-    // 점수는 숫자가 합쳐졌을 때만 증가
-    score += gainedScore;
-
-    addRandomTile();
-    renderBoard();
-  }
+function boardsAreSame(boardA, boardB) {
+  return JSON.stringify(boardA) === JSON.stringify(boardB);
 }
 
 /* ==============================
-   모바일 스와이프 조작
+   이동 처리 통합 함수
    ============================== */
 
-boardEl.addEventListener("touchstart", (event) => {
-  event.preventDefault();
+function move(direction) {
+  const oldBoard = cloneBoard(board);
+  const nextBoard = Array.from({ length: 4 }, () => Array(4).fill(0));
 
-  touchStartX = event.touches[0].clientX;
-  touchStartY = event.touches[0].clientY;
-}, { passive: false });
+  let totalGainedScore = 0;
+  mergedPositions = [];
 
-boardEl.addEventListener("touchmove", (event) => {
-  // 게임판 위에서 손가락을 움직일 때 화면 스크롤 방지
-  event.preventDefault();
-}, { passive: false });
+  for (let i = 0; i < 4; i++) {
+    let line = [];
 
-boardEl.addEventListener("touchend", (event) => {
-  event.preventDefault();
+    if (direction === "left") {
+      line = [...board[i]];
+    }
 
-  const touchEndX = event.changedTouches[0].clientX;
-  const touchEndY = event.changedTouches[0].clientY;
+    if (direction === "right") {
+      line = [...board[i]].reverse();
+    }
 
-  const diffX = touchEndX - touchStartX;
-  const diffY = touchEndY - touchStartY;
+    if (direction === "up") {
+      line = [board[0][i], board[1][i], board[2][i], board[3][i]];
+    }
 
-  if (Math.abs(diffX) > Math.abs(diffY)) {
-    if (diffX > 40) moveRight();
-    if (diffX < -40) moveLeft();
-  } else {
-    if (diffY > 40) moveDown();
-    if (diffY < -40) moveUp();
+    if (direction === "down") {
+      line = [board[3][i], board[2][i], board[1][i], board[0][i]];
+    }
+
+    const result = mergeLine(line);
+    totalGainedScore += result.gainedScore;
+
+    if (direction === "left") {
+      for (let col = 0; col < 4; col++) {
+        nextBoard[i][col] = result.line[col];
+      }
+
+      result.mergedIndexes.forEach((col) => {
+        mergedPositions.push({ row: i, col });
+      });
+    }
+
+    if (direction === "right") {
+      const reversedResult = [...result.line].reverse();
+
+      for (let col = 0; col < 4; col++) {
+        nextBoard[i][col] = reversedResult[col];
+      }
+
+      result.mergedIndexes.forEach((reversedCol) => {
+        mergedPositions.push({ row: i, col: 3 - reversedCol });
+      });
+    }
+
+    if (direction === "up") {
+      for (let row = 0; row < 4; row++) {
+        nextBoard[row][i] = result.line[row];
+      }
+
+      result.mergedIndexes.forEach((row) => {
+        mergedPositions.push({ row, col: i });
+      });
+    }
+
+    if (direction === "down") {
+      const reversedResult = [...result.line].reverse();
+
+      for (let row = 0; row < 4; row++) {
+        nextBoard[row][i] = reversedResult[row];
+      }
+
+      result.mergedIndexes.forEach((reversedRow) => {
+        mergedPositions.push({ row: 3 - reversedRow, col: i });
+      });
+    }
   }
-}, { passive: false });
+
+  /*
+    실제 2048 규칙:
+    - 보드가 변했을 때만 이동 성공
+    - 이동 성공 시에만 새 타일 생성
+    - 점수는 병합 점수만 더함
+    - 단순 이동이면 totalGainedScore가 0이므로 점수 변화 없음
+  */
+  if (!boardsAreSame(oldBoard, nextBoard)) {
+    board = nextBoard;
+    score += totalGainedScore;
+
+    addRandomTile();
+    renderBoard();
+  } else {
+    // 보드가 안 움직였으면 아무 일도 일어나면 안 됨
+    mergedPositions = [];
+  }
+}
+
+/* 방향별 이동 함수 */
+
+function moveLeft() {
+  move("left");
+}
+
+function moveRight() {
+  move("right");
+}
+
+function moveUp() {
+  move("up");
+}
+
+function moveDown() {
+  move("down");
+}
+
+/* ==============================
+   PC/모바일 공통 스와이프 조작
+   ============================== */
+
+boardEl.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+
+  isPointerDown = true;
+  pointerStartX = event.clientX;
+  pointerStartY = event.clientY;
+
+  boardEl.setPointerCapture(event.pointerId);
+});
+
+boardEl.addEventListener("pointermove", (event) => {
+  event.preventDefault();
+});
+
+boardEl.addEventListener("pointerup", (event) => {
+  event.preventDefault();
+
+  if (!isPointerDown) return;
+  isPointerDown = false;
+
+  const pointerEndX = event.clientX;
+  const pointerEndY = event.clientY;
+
+  const diffX = pointerEndX - pointerStartX;
+  const diffY = pointerEndY - pointerStartY;
+
+  const absX = Math.abs(diffX);
+  const absY = Math.abs(diffY);
+
+  // 너무 짧은 움직임은 무시
+  if (absX < 40 && absY < 40) return;
+
+  if (absX > absY) {
+    if (diffX > 0) {
+      moveRight();
+    } else {
+      moveLeft();
+    }
+  } else {
+    if (diffY > 0) {
+      moveDown();
+    } else {
+      moveUp();
+    }
+  }
+});
+
+boardEl.addEventListener("pointercancel", () => {
+  isPointerDown = false;
+});
 
 /* =========================================================
    사후 회상 설문
@@ -655,6 +677,7 @@ function createRecallSurvey() {
 }
 
 /* 설문 제출 */
+
 recallForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -684,6 +707,7 @@ recallForm.addEventListener("submit", (event) => {
 
 function createSummary() {
   const total = surveyResponses.length;
+
   const recallSum = surveyResponses.reduce(
     (sum, item) => sum + Number(item.recallScore),
     0
@@ -699,6 +723,7 @@ function createSummary() {
 
   const avg = (items, key) => {
     if (items.length === 0) return 0;
+
     const sum = items.reduce((acc, item) => acc + Number(item[key]), 0);
     return (sum / items.length).toFixed(2);
   };
