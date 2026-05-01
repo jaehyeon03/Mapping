@@ -359,7 +359,7 @@ function addRandomTile() {
 }
 
 /* ==============================
-   2048 실제 규칙 적용 로직
+   2048 실제 게임 규칙 적용 로직
    ============================== */
 
 /*
@@ -373,40 +373,40 @@ function addRandomTile() {
 
   반환값:
   - line: 병합 후 한 줄
-  - gained: 이번 줄에서 얻은 점수
+  - gainedScore: 이번 줄에서 얻은 점수
   - mergedIndexes: 합쳐진 타일의 결과 위치
 */
 function mergeLine(line) {
-  const filtered = line.filter((value) => value !== 0);
+  const numbers = line.filter((value) => value !== 0);
 
-  const result = [];
+  const newLine = [];
   const mergedIndexes = [];
-  let gained = 0;
+  let gainedScore = 0;
 
-  for (let i = 0; i < filtered.length; i++) {
-    if (i < filtered.length - 1 && filtered[i] === filtered[i + 1]) {
-      const mergedValue = filtered[i] * 2;
+  for (let i = 0; i < numbers.length; i++) {
+    if (i < numbers.length - 1 && numbers[i] === numbers[i + 1]) {
+      const mergedValue = numbers[i] * 2;
 
-      result.push(mergedValue);
-      gained += mergedValue;
+      newLine.push(mergedValue);
+      gainedScore += mergedValue;
 
-      // 합쳐진 타일의 최종 위치 기록
-      mergedIndexes.push(result.length - 1);
+      // 합쳐진 타일의 최종 위치 저장
+      mergedIndexes.push(newLine.length - 1);
 
-      // 다음 타일은 이미 합쳐졌으므로 건너뜀
+      // 다음 숫자는 이미 합쳐졌으므로 건너뜀
       i++;
     } else {
-      result.push(filtered[i]);
+      newLine.push(numbers[i]);
     }
   }
 
-  while (result.length < 4) {
-    result.push(0);
+  while (newLine.length < 4) {
+    newLine.push(0);
   }
 
   return {
-    line: result,
-    gained,
+    line: newLine,
+    gainedScore,
     mergedIndexes
   };
 }
@@ -414,14 +414,14 @@ function mergeLine(line) {
 /* 왼쪽 이동 */
 function moveLeft() {
   const oldBoard = JSON.stringify(board);
-  let totalGained = 0;
+  let totalGainedScore = 0;
 
   mergedPositions = [];
 
   board = board.map((row, rowIndex) => {
     const result = mergeLine(row);
 
-    totalGained += result.gained;
+    totalGainedScore += result.gainedScore;
 
     result.mergedIndexes.forEach((colIndex) => {
       mergedPositions.push({
@@ -433,13 +433,13 @@ function moveLeft() {
     return result.line;
   });
 
-  afterMove(oldBoard, totalGained);
+  afterMove(oldBoard, totalGainedScore);
 }
 
 /* 오른쪽 이동 */
 function moveRight() {
   const oldBoard = JSON.stringify(board);
-  let totalGained = 0;
+  let totalGainedScore = 0;
 
   mergedPositions = [];
 
@@ -447,7 +447,7 @@ function moveRight() {
     const reversedRow = [...row].reverse();
     const result = mergeLine(reversedRow);
 
-    totalGained += result.gained;
+    totalGainedScore += result.gainedScore;
 
     result.mergedIndexes.forEach((reversedColIndex) => {
       mergedPositions.push({
@@ -459,13 +459,13 @@ function moveRight() {
     return result.line.reverse();
   });
 
-  afterMove(oldBoard, totalGained);
+  afterMove(oldBoard, totalGainedScore);
 }
 
 /* 위쪽 이동 */
 function moveUp() {
   const oldBoard = JSON.stringify(board);
-  let totalGained = 0;
+  let totalGainedScore = 0;
 
   mergedPositions = [];
 
@@ -473,7 +473,7 @@ function moveUp() {
     const column = board.map((row) => row[col]);
     const result = mergeLine(column);
 
-    totalGained += result.gained;
+    totalGainedScore += result.gainedScore;
 
     result.mergedIndexes.forEach((rowIndex) => {
       mergedPositions.push({
@@ -487,21 +487,21 @@ function moveUp() {
     }
   }
 
-  afterMove(oldBoard, totalGained);
+  afterMove(oldBoard, totalGainedScore);
 }
 
 /* 아래쪽 이동 */
 function moveDown() {
   const oldBoard = JSON.stringify(board);
-  let totalGained = 0;
+  let totalGainedScore = 0;
 
   mergedPositions = [];
 
   for (let col = 0; col < 4; col++) {
-    const column = board.map((row) => row[col]).reverse();
-    const result = mergeLine(column);
+    const reversedColumn = board.map((row) => row[col]).reverse();
+    const result = mergeLine(reversedColumn);
 
-    totalGained += result.gained;
+    totalGainedScore += result.gainedScore;
 
     result.mergedIndexes.forEach((reversedRowIndex) => {
       mergedPositions.push({
@@ -517,7 +517,7 @@ function moveDown() {
     }
   }
 
-  afterMove(oldBoard, totalGained);
+  afterMove(oldBoard, totalGainedScore);
 }
 
 /* 이동 후 처리 */
