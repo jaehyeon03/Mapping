@@ -152,6 +152,7 @@ participantForm.addEventListener("submit", (event) => {
 function startExperiment() {
   showScreen(experimentScreen);
   document.body.classList.add("lock-scroll");
+
   initGame();
   createNotificationSchedule();
 
@@ -304,6 +305,7 @@ function endExperiment() {
 function initGame() {
   board = Array.from({ length: 4 }, () => Array(4).fill(0));
   score = 0;
+  mergedPositions = [];
 
   addRandomTile();
   addRandomTile();
@@ -338,6 +340,7 @@ function renderBoard() {
 
   scoreEl.textContent = score;
 }
+
 function addRandomTile() {
   const emptyCells = [];
 
@@ -355,99 +358,186 @@ function addRandomTile() {
   board[randomCell.r][randomCell.c] = Math.random() < 0.9 ? 2 : 4;
 }
 
-function slideAndMerge(row, rowIndex = 0, direction = "left") {
-  const filtered = row.filter((value) => value !== 0);
+/* ==============================
+   2048 실제 규칙 적용 로직
+   ============================== */
 
-  for (let i = 0; i < filtered.length - 1; i++) {
-    if (filtered[i] === filtered[i + 1]) {
-      filtered[i] *= 2;
+/*
+  한 줄을 2048 규칙에 따라 이동/병합하는 함수
 
-      // 합쳐진 타일의 위치 기록
-      mergedPositions.push({
-        row: rowIndex,
-        col: i,
-        direction: direction
-      });
+  예시:
+  [2, 0, 2, 2]
+  → 0 제거: [2, 2, 2]
+  → 앞에서부터 같은 숫자 병합: [4, 2]
+  → 빈칸 채우기: [4, 2, 0, 0]
 
-      filtered[i + 1] = 0;
+  반환값:
+  - line: 병합 후 한 줄
+  - gained: 이번 줄에서 얻은 점수
+  - mergedIndexes: 합쳐진 타일의 결과 위치
+*/
+function mergeLine(line) {
+  const filtered = line.filter((value) => value !== 0);
+
+  const result = [];
+  const mergedIndexes = [];
+  let gained = 0;
+
+  for (let i = 0; i < filtered.length; i++) {
+    if (i < filtered.length - 1 && filtered[i] === filtered[i + 1]) {
+      const mergedValue = filtered[i] * 2;
+
+      result.push(mergedValue);
+      gained += mergedValue;
+
+      // 합쳐진 타일의 최종 위치 기록
+      mergedIndexes.push(result.length - 1);
+
+      // 다음 타일은 이미 합쳐졌으므로 건너뜀
+      i++;
+    } else {
+      result.push(filtered[i]);
     }
   }
 
-  const merged = filtered.filter((value) => value !== 0);
-
-  while (merged.length < 4) {
-    merged.push(0);
+  while (result.length < 4) {
+    result.push(0);
   }
 
-  return merged;
+  return {
+    line: result,
+    gained,
+    mergedIndexes
+  };
 }
 
+/* 왼쪽 이동 */
 function moveLeft() {
   const oldBoard = JSON.stringify(board);
+  let totalGained = 0;
 
   mergedPositions = [];
 
-  board = board.map((row, rowIndex) => slideAndMerge(row, rowIndex, "left"));
+  board = board.map((row, rowIndex) => {
+    const result = mergeLine(row);
 
-  afterMove(oldBoard);
-}
+    totalGained += result.gained;
 
-function moveRight() {
-  const oldBoard = JSON.stringify(board);
+    result.mergedIndexes.forEach((colIndex) => {
+      mergedPositions.push({
+        row: rowIndex,
+        col: colIndex
+      });
+    });
 
-  board = board.map((row) => {
-    const reversed = [...row].reverse();
-    return slideAndMerge(reversed).reverse();
+    return result.line;
   });
 
-  afterMove(oldBoard);
+  afterMove(oldBoard, totalGained);
 }
 
+/* 오른쪽 이동 */
+function moveRight() {
+  const oldBoard = JSON.stringify(board);
+  let totalGained = 0;
+
+  mergedPositions = [];
+
+  board = board.map((row, rowIndex) => {
+    const reversedRow = [...row].reverse();
+    const result = mergeLine(reversedRow);
+
+    totalGained += result.gained;
+
+    result.mergedIndexes.forEach((reversedColIndex) => {
+      mergedPositions.push({
+        row: rowIndex,
+        col: 3 - reversedColIndex
+      });
+    });
+
+    return result.line.reverse();
+  });
+
+  afterMove(oldBoard, totalGained);
+}
+
+/* 위쪽 이동 */
 function moveUp() {
   const oldBoard = JSON.stringify(board);
+  let totalGained = 0;
 
-  for (let c = 0; c < 4; c++) {
-    const column = board.map((row) => row[c]);
-    const mergedColumn = slideAndMerge(column);
+  mergedPositions = [];
 
-    for (let r = 0; r < 4; r++) {
-      board[r][c] = mergedColumn[r];
+  for (let col = 0; col < 4; col++) {
+    const column = board.map((row) => row[col]);
+    const result = mergeLine(column);
+
+    totalGained += result.gained;
+
+    result.mergedIndexes.forEach((rowIndex) => {
+      mergedPositions.push({
+        row: rowIndex,
+        col: col
+      });
+    });
+
+    for (let row = 0; row < 4; row++) {
+      board[row][col] = result.line[row];
     }
   }
 
-  afterMove(oldBoard);
+  afterMove(oldBoard, totalGained);
 }
 
+/* 아래쪽 이동 */
 function moveDown() {
   const oldBoard = JSON.stringify(board);
+  let totalGained = 0;
 
-  for (let c = 0; c < 4; c++) {
-    const column = board.map((row) => row[c]).reverse();
-    const mergedColumn = slideAndMerge(column).reverse();
+  mergedPositions = [];
 
-    for (let r = 0; r < 4; r++) {
-      board[r][c] = mergedColumn[r];
+  for (let col = 0; col < 4; col++) {
+    const column = board.map((row) => row[col]).reverse();
+    const result = mergeLine(column);
+
+    totalGained += result.gained;
+
+    result.mergedIndexes.forEach((reversedRowIndex) => {
+      mergedPositions.push({
+        row: 3 - reversedRowIndex,
+        col: col
+      });
+    });
+
+    const newColumn = result.line.reverse();
+
+    for (let row = 0; row < 4; row++) {
+      board[row][col] = newColumn[row];
     }
   }
 
-  afterMove(oldBoard);
+  afterMove(oldBoard, totalGained);
 }
 
-function afterMove(oldBoard) {
+/* 이동 후 처리 */
+function afterMove(oldBoard, gainedScore) {
   const newBoard = JSON.stringify(board);
 
-  // 보드가 실제로 움직였을 때만 점수 증가
+  // 보드가 실제로 변했을 때만 새 타일 추가
   if (oldBoard !== newBoard) {
-    score += 1;
+    // 점수는 숫자가 합쳐졌을 때만 증가
+    score += gainedScore;
 
     addRandomTile();
     renderBoard();
   }
 }
 
+/* ==============================
+   모바일 스와이프 조작
+   ============================== */
 
-
-/* 모바일 스와이프 조작 */
 boardEl.addEventListener("touchstart", (event) => {
   event.preventDefault();
 
@@ -477,6 +567,7 @@ boardEl.addEventListener("touchend", (event) => {
     if (diffY < -40) moveUp();
   }
 }, { passive: false });
+
 /* =========================================================
    사후 회상 설문
    ========================================================= */
