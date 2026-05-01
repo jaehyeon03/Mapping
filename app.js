@@ -62,7 +62,7 @@ let participantInfo = {};
 let notificationSchedule = [];
 let shownNotifications = [];
 let surveyResponses = [];
-
+let mergedPositions = [];
 let experimentTimer = null;
 let experimentStartTime = null;
 let remainingSeconds = EXPERIMENT_SECONDS;
@@ -314,21 +314,30 @@ function initGame() {
 function renderBoard() {
   boardEl.innerHTML = "";
 
-  board.flat().forEach((value) => {
-    const tile = document.createElement("div");
-    tile.classList.add("tile");
+  board.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
 
-    if (value > 0) {
-      tile.textContent = value;
-      tile.classList.add(`tile-${value}`);
-    }
+      if (value > 0) {
+        tile.textContent = value;
+        tile.classList.add(`tile-${value}`);
 
-    boardEl.appendChild(tile);
+        const isMerged = mergedPositions.some(
+          (pos) => pos.row === rowIndex && pos.col === colIndex
+        );
+
+        if (isMerged) {
+          tile.classList.add("merged");
+        }
+      }
+
+      boardEl.appendChild(tile);
+    });
   });
 
   scoreEl.textContent = score;
 }
-
 function addRandomTile() {
   const emptyCells = [];
 
@@ -346,13 +355,20 @@ function addRandomTile() {
   board[randomCell.r][randomCell.c] = Math.random() < 0.9 ? 2 : 4;
 }
 
-function slideAndMerge(row) {
+function slideAndMerge(row, rowIndex = 0, direction = "left") {
   const filtered = row.filter((value) => value !== 0);
 
   for (let i = 0; i < filtered.length - 1; i++) {
     if (filtered[i] === filtered[i + 1]) {
       filtered[i] *= 2;
-      score += filtered[i];
+
+      // 합쳐진 타일의 위치 기록
+      mergedPositions.push({
+        row: rowIndex,
+        col: i,
+        direction: direction
+      });
+
       filtered[i + 1] = 0;
     }
   }
@@ -369,7 +385,9 @@ function slideAndMerge(row) {
 function moveLeft() {
   const oldBoard = JSON.stringify(board);
 
-  board = board.map((row) => slideAndMerge(row));
+  mergedPositions = [];
+
+  board = board.map((row, rowIndex) => slideAndMerge(row, rowIndex, "left"));
 
   afterMove(oldBoard);
 }
