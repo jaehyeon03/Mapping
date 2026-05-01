@@ -437,6 +437,8 @@ function afterMove(oldBoard) {
   const newBoard = JSON.stringify(board);
 
   if (oldBoard !== newBoard) {
+    score = Math.min(score + 1, MAX_SCORE);
+
     addRandomTile();
     renderBoard();
   }
