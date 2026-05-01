@@ -139,8 +139,6 @@ participantForm.addEventListener("submit", (event) => {
     participantId: document.getElementById("participantId").value.trim(),
     age: document.getElementById("age").value,
     gender: document.getElementById("gender").value,
-    notificationSensitivity: document.getElementById("notificationSensitivity").value,
-    fatigue: document.getElementById("fatigue").value,
     experimentDate: new Date().toLocaleString()
   };
 
