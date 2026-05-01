@@ -211,21 +211,23 @@ function createNotificationSchedule() {
 
   baseConditions = shuffleArray(baseConditions).slice(0, NOTIFICATION_COUNT);
 
-  const randomTimes = [];
+const randomTimes = [];
 
-  while (randomTimes.length < baseConditions.length) {
-    const time =
-      Math.floor(Math.random() * (MAX_NOTIFICATION_TIME - MIN_NOTIFICATION_TIME + 1)) +
-      MIN_NOTIFICATION_TIME;
+const availableStart = MIN_NOTIFICATION_TIME;
+const availableEnd = MAX_NOTIFICATION_TIME;
+const totalRange = availableEnd - availableStart;
+const interval = Math.floor(totalRange / baseConditions.length);
 
-    const isFarEnough = randomTimes.every((t) => Math.abs(t - time) >= 8);
+for (let i = 0; i < baseConditions.length; i++) {
+  const baseTime = availableStart + i * interval;
 
-    if (isFarEnough) {
-      randomTimes.push(time);
-    }
-  }
+  // 너무 규칙적으로 나오지 않게 0~4초 정도 흔들림 추가
+  const jitter = Math.floor(Math.random() * 5);
 
-  randomTimes.sort((a, b) => a - b);
+  randomTimes.push(Math.min(baseTime + jitter, availableEnd));
+}
+
+randomTimes.sort((a, b) => a - b);
 
   notificationSchedule = baseConditions.map((condition, index) => {
     const messagePool =
