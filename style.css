@@ -33,6 +33,27 @@ body {
   color: var(--text);
 }
 
+/* ==============================
+   실험 중 화면 스크롤 고정
+   ============================== */
+body.lock-scroll {
+  overflow: hidden;
+  height: 100vh;
+  position: fixed;
+  width: 100%;
+}
+
+/* 2048 보드에서 스와이프할 때 화면이 움직이지 않도록 설정 */
+.board {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+/* 혹시 control-pad 코드가 HTML에 남아 있어도 안 보이게 처리 */
+.control-pad {
+  display: none;
+}
+
 .app {
   min-height: 100vh;
 }
