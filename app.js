@@ -151,7 +151,7 @@ participantForm.addEventListener("submit", (event) => {
 
 function startExperiment() {
   showScreen(experimentScreen);
-
+  document.body.classList.add("lock-scroll");
   initGame();
   createNotificationSchedule();
 
@@ -291,6 +291,8 @@ function endExperiment() {
   clearInterval(experimentTimer);
   notificationToast.classList.add("hidden");
 
+  document.body.classList.remove("lock-scroll");
+
   createRecallSurvey();
   showScreen(surveyScreen);
 }
@@ -422,29 +424,24 @@ function afterMove(oldBoard) {
   }
 }
 
-/* 키보드 방향키 조작 */
-document.addEventListener("keydown", (event) => {
-  if (!experimentScreen.classList.contains("active")) return;
 
-  if (event.key === "ArrowLeft") moveLeft();
-  if (event.key === "ArrowRight") moveRight();
-  if (event.key === "ArrowUp") moveUp();
-  if (event.key === "ArrowDown") moveDown();
-});
-
-/* 모바일 버튼 조작 */
-document.getElementById("leftBtn").addEventListener("click", moveLeft);
-document.getElementById("rightBtn").addEventListener("click", moveRight);
-document.getElementById("upBtn").addEventListener("click", moveUp);
-document.getElementById("downBtn").addEventListener("click", moveDown);
 
 /* 모바일 스와이프 조작 */
 boardEl.addEventListener("touchstart", (event) => {
+  event.preventDefault();
+
   touchStartX = event.touches[0].clientX;
   touchStartY = event.touches[0].clientY;
-});
+}, { passive: false });
+
+boardEl.addEventListener("touchmove", (event) => {
+  // 게임판 위에서 손가락을 움직일 때 화면 스크롤 방지
+  event.preventDefault();
+}, { passive: false });
 
 boardEl.addEventListener("touchend", (event) => {
+  event.preventDefault();
+
   const touchEndX = event.changedTouches[0].clientX;
   const touchEndY = event.changedTouches[0].clientY;
 
@@ -458,8 +455,7 @@ boardEl.addEventListener("touchend", (event) => {
     if (diffY > 40) moveDown();
     if (diffY < -40) moveUp();
   }
-});
-
+}, { passive: false });
 /* =========================================================
    사후 회상 설문
    ========================================================= */
