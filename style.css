@@ -386,15 +386,18 @@ textarea:focus {
 }
 
 .notification-toast.red {
-  border-left: 10px solid var(--red);
+  border: 4px solid var(--red);
+  box-shadow: 0 16px 44px rgba(239, 68, 68, 0.28);
 }
 
 .notification-toast.green {
-  border-left: 10px solid var(--green);
+  border: 4px solid var(--green);
+  box-shadow: 0 16px 44px rgba(34, 197, 94, 0.28);
 }
 
 .notification-toast.blue {
-  border-left: 10px solid var(--blue);
+  border: 4px solid var(--blue);
+  box-shadow: 0 16px 44px rgba(59, 130, 246, 0.28);
 }
 
 .toast-importance {
