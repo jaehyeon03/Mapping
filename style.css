@@ -392,66 +392,157 @@ textarea:focus {
 }
 
 /* ==============================
-   알림 토스트
+   실제 앱 알림 스타일
    ============================== */
 .notification-toast {
   position: fixed;
-  top: 24px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(420px, calc(100% - 32px));
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 16px 44px rgba(15, 23, 42, 0.25);
-  padding: 16px;
-  z-index: 50;
-  animation: toastIn 0.25s ease;
+
+  width: min(390px, calc(100% - 28px));
+  min-height: 82px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 14px 15px;
+
+  /* 실제 모바일 알림처럼 반투명 + 흐림 효과 */
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 26px;
+
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  z-index: 100;
+  overflow: hidden;
+
+  animation: phoneNotificationIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* 숨김 처리 */
 .notification-toast.hidden {
   display: none;
 }
 
+/* 왼쪽 앱 아이콘 */
+.toast-icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 900;
+
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+}
+
+/* 색상 조건: 아이콘과 얇은 상단 라인으로 표현 */
+.notification-toast.red .toast-icon {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+.notification-toast.green .toast-icon {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+}
+
+.notification-toast.blue .toast-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+
+/* 색상 조건: 알림 전체 둥근 테두리 */
 .notification-toast.red {
-  border: 4px solid var(--red);
-  box-shadow: 0 16px 44px rgba(239, 68, 68, 0.28);
+  border: 3px solid var(--red);
+  box-shadow:
+    0 18px 45px rgba(239, 68, 68, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .notification-toast.green {
-  border: 4px solid var(--green);
-  box-shadow: 0 16px 44px rgba(34, 197, 94, 0.28);
+  border: 3px solid var(--green);
+  box-shadow:
+    0 18px 45px rgba(34, 197, 94, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .notification-toast.blue {
-  border: 4px solid var(--blue);
-  box-shadow: 0 16px 44px rgba(59, 130, 246, 0.28);
+  border: 3px solid var(--blue);
+  box-shadow:
+    0 18px 45px rgba(59, 130, 246, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+/* 알림 내용 영역 */
+.toast-content {
+  flex: 1;
+  min-width: 0;
 }
 
-.toast-importance {
-  margin: 0 0 6px;
+/* 앱 이름 + 시간 */
+.toast-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.toast-app-name {
+  margin: 0;
+  color: #111827;
   font-size: 13px;
   font-weight: 900;
-  color: var(--muted);
+  letter-spacing: -0.01em;
 }
 
+.toast-time {
+  flex: 0 0 auto;
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 중요도 문구는 화면에 보이지 않게 유지 */
+.toast-importance {
+  display: none;
+}
+
+/* 실제 알림 메시지 */
 .toast-message {
   margin: 0;
-  font-size: 17px;
-  font-weight: 800;
+  color: #1f2937;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1.45;
+  letter-spacing: -0.02em;
 }
 
-@keyframes toastIn {
+/* 등장 애니메이션 */
+@keyframes phoneNotificationIn {
   from {
     opacity: 0;
-    transform: translate(-50%, -12px);
+    transform: translate(-50%, -24px) scale(0.96);
   }
+
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0) scale(1);
   }
 }
-
 /* ==============================
    회상 설문
    ============================== */
