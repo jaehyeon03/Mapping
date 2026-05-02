@@ -52,6 +52,7 @@ const summaryBox = document.getElementById("summaryBox");
 
 const downloadCsvBtn = document.getElementById("downloadCsvBtn");
 const restartBtn = document.getElementById("restartBtn");
+const reshuffleBtn = document.getElementById("reshuffleBtn");
 
 /* ==============================
    실험 데이터 저장 변수
@@ -342,6 +343,7 @@ function renderBoard() {
   });
 
   scoreEl.textContent = score;
+  updateReshuffleButton();
 }
 
 function addRandomTile() {
@@ -421,6 +423,48 @@ function cloneBoard(targetBoard) {
 
 function boardsAreSame(boardA, boardB) {
   return JSON.stringify(boardA) === JSON.stringify(boardB);
+}
+
+function hasAvailableMove() {
+  // 빈칸이 있으면 아직 이동 가능
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (board[row][col] === 0) {
+        return true;
+      }
+    }
+  }
+
+  // 가로로 합칠 수 있는 타일이 있는지 확인
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 3; col++) {
+      if (board[row][col] === board[row][col + 1]) {
+        return true;
+      }
+    }
+  }
+
+  // 세로로 합칠 수 있는 타일이 있는지 확인
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (board[row][col] === board[row + 1][col]) {
+        return true;
+      }
+    }
+  }
+
+  // 빈칸도 없고 합칠 숫자도 없으면 이동 불가
+  return false;
+}
+
+function updateReshuffleButton() {
+  if (!reshuffleBtn) return;
+
+  if (!hasAvailableMove()) {
+    reshuffleBtn.classList.remove("hidden");
+  } else {
+    reshuffleBtn.classList.add("hidden");
+  }
 }
 
 /* ==============================
@@ -809,6 +853,21 @@ function downloadCSV() {
 /* ==============================
    다시 시작
    ============================== */
+
+reshuffleBtn.addEventListener("click", () => {
+  continueWithNewBoard();
+});
+
+function continueWithNewBoard() {
+  // 점수와 남은 시간은 유지하고 보드만 새로 시작
+  board = Array.from({ length: 4 }, () => Array(4).fill(0));
+  mergedPositions = [];
+
+  addRandomTile();
+  addRandomTile();
+
+  renderBoard();
+}
 
 restartBtn.addEventListener("click", () => {
   location.reload();
