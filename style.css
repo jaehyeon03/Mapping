@@ -83,6 +83,10 @@ body.lock-scroll {
   padding: 24px;
 }
 
+#experimentScreen {
+  padding-top: 110px;
+}
+
 .screen.active {
   display: block;
 }
