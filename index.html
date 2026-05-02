@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,6 +10,7 @@
   <!-- CSS 연결 -->
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <!-- 전체 앱 컨테이너 -->
   <main class="app">
@@ -20,10 +22,10 @@
         <h1>알림 색상과 정보 중요도가<br />사용자 회상에 미치는 영향</h1>
 
         <p class="description">
+          참가자 안내문
           안녕하세요. 본 연구는 과업 수행 상황에서 알림의 시각적 특성(색상)과 정보 중요도가 사용자 회상에 미치는 영향을 알아보기 위한 실험입니다.
-          실험 중 참가자는 웹 앱에서 간단한 게임을 수행하며, 게임 도중 화면 내 알림을 보게 됩니다. 각 알림은 잠시 나타났다가 사라지며,
-          응답 내용은 연구 목적으로만 사용됩니다.
-
+          실험 중 참가자는 웹 앱에서 간단한 게임을 수행하며, 게임 도중 화면 내 알림을 보게 됩니다. 각 알림은 잠시 나타났다가 사라지며
+          응답 내용은 연구 목적으로만 사용되며, 익명으로 처리됩니다. 원치 않을 경우 언제든 참여를 중단할 수 있습니다.
         </p>
 
         <!-- 참가자 기본 정보 입력 -->
@@ -44,7 +46,6 @@
               <option value="">선택</option>
               <option value="남성">남성</option>
               <option value="여성">여성</option>
-              <option value="응답하지 않음">응답하지 않음</option>
             </select>
           </label>
 
@@ -84,15 +85,26 @@
 
           <p class="game-guide">
             2048 보드 위에서 손가락으로 스와이프하여 이동하세요.
-            게임 중 알림이 나타나면 읽고 기억해 주세요.
           </p>
         </div>
       </section>
 
       <!-- 웹 앱 내부 알림 -->
+      <!-- 실제 스마트폰 푸시 알림처럼 보이는 알림 -->
       <div id="notificationToast" class="notification-toast hidden">
+        <div class="toast-icon">
+          <span>알</span>
+        </div>
+
         <div class="toast-content">
+          <div class="toast-top">
+            <p class="toast-app-name">학교 알림</p>
+            <span class="toast-time">지금</span>
+          </div>
+
+          <!-- 중요도는 실험 데이터에는 저장하지만 화면에는 보이지 않게 유지 -->
           <p id="toastImportance" class="toast-importance"></p>
+
           <p id="toastMessage" class="toast-message"></p>
         </div>
       </div>
@@ -139,4 +151,5 @@
   <!-- JS 연결 -->
   <script src="app.js"></script>
 </body>
+
 </html>
