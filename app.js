@@ -266,8 +266,9 @@ function checkNotificationTiming(elapsedSeconds) {
 function showNotification(notification, elapsedSeconds) {
   notificationToast.className = `notification-toast ${notification.color}`;
 
-  toastImportance.textContent =
-    notification.importance === "high" ? "중요도 높음" : "중요도 낮음";
+  // 중요도 문구는 참가자에게 보이지 않게 숨김
+  toastImportance.textContent = "";
+  toastImportance.style.display = "none";
 
   toastMessage.textContent = notification.message;
 
