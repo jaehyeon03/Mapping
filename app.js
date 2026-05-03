@@ -42,6 +42,7 @@ const recallForm = document.getElementById("recallForm");
 const timerEl = document.getElementById("timer");
 const scoreEl = document.getElementById("score");
 const boardEl = document.getElementById("board");
+const reshuffleBtn = document.getElementById("reshuffleBtn");
 
 const notificationToast = document.getElementById("notificationToast");
 const toastImportance = document.getElementById("toastImportance");
@@ -52,7 +53,6 @@ const summaryBox = document.getElementById("summaryBox");
 
 const downloadCsvBtn = document.getElementById("downloadCsvBtn");
 const restartBtn = document.getElementById("restartBtn");
-const reshuffleBtn = document.getElementById("reshuffleBtn");
 
 /* ==============================
    실험 데이터 저장 변수
@@ -61,7 +61,7 @@ const reshuffleBtn = document.getElementById("reshuffleBtn");
 let participantInfo = {};
 let notificationSchedule = [];
 let shownNotifications = [];
-let surveyResponses = [];
+let surveyResponses = {};
 
 let experimentTimer = null;
 let experimentStartTime = null;
@@ -159,7 +159,7 @@ function startExperiment() {
   createNotificationSchedule();
 
   shownNotifications = [];
-  surveyResponses = [];
+  surveyResponses = {};
 
   remainingSeconds = EXPERIMENT_SECONDS;
   experimentStartTime = Date.now();
@@ -212,23 +212,23 @@ function createNotificationSchedule() {
 
   baseConditions = shuffleArray(baseConditions).slice(0, NOTIFICATION_COUNT);
 
-const randomTimes = [];
+  const randomTimes = [];
 
-const availableStart = MIN_NOTIFICATION_TIME;
-const availableEnd = MAX_NOTIFICATION_TIME;
-const totalRange = availableEnd - availableStart;
-const interval = Math.floor(totalRange / baseConditions.length);
+  const availableStart = MIN_NOTIFICATION_TIME;
+  const availableEnd = MAX_NOTIFICATION_TIME;
+  const totalRange = availableEnd - availableStart;
+  const interval = Math.floor(totalRange / baseConditions.length);
 
-for (let i = 0; i < baseConditions.length; i++) {
-  const baseTime = availableStart + i * interval;
+  for (let i = 0; i < baseConditions.length; i++) {
+    const baseTime = availableStart + i * interval;
 
-  // 너무 규칙적으로 나오지 않게 0~4초 정도 흔들림 추가
-  const jitter = Math.floor(Math.random() * 5);
+    // 너무 규칙적으로 나오지 않게 0~4초 정도 흔들림 추가
+    const jitter = Math.floor(Math.random() * 5);
 
-  randomTimes.push(Math.min(baseTime + jitter, availableEnd));
-}
+    randomTimes.push(Math.min(baseTime + jitter, availableEnd));
+  }
 
-randomTimes.sort((a, b) => a - b);
+  randomTimes.sort((a, b) => a - b);
 
   notificationSchedule = baseConditions.map((condition, index) => {
     const messagePool =
@@ -644,83 +644,51 @@ boardEl.addEventListener("pointercancel", () => {
 function createRecallSurvey() {
   surveyList.innerHTML = "";
 
-  const randomizedNotifications = shuffleArray([...shownNotifications]);
+  surveyList.innerHTML = `
+    <div class="survey-item">
+      <p>
+        <strong>1. 2048 게임을 수행하는 동안 화면에 여러 알림이 나타났습니다.</strong><br />
+        기억나는 알림의 내용들을 최대한 자세히, 모두 적어주십시오.
+        <span style="color: #ef4444;">*</span>
+      </p>
 
-  randomizedNotifications.forEach((notification, index) => {
-    const item = document.createElement("div");
-    item.classList.add("survey-item");
-
-    const colorKorean = {
-      red: "빨간색",
-      green: "초록색",
-      blue: "파란색"
-    };
-
-    const importanceKorean =
-      notification.importance === "high" ? "높음" : "낮음";
-
-    item.innerHTML = `
-      <div class="survey-meta">
-        <span class="badge ${notification.color}">
-          ${colorKorean[notification.color]}
-        </span>
-        <span class="badge">
-          중요도 ${importanceKorean}
-        </span>
-      </div>
-
-      <p><strong>Q${index + 1}.</strong> 이 조건의 알림 내용을 기억하나요?</p>
-
-      <div class="radio-row">
-        <label>
-          <input type="radio" name="remember_${notification.id}" value="1" required />
-          기억함
-        </label>
-        <label>
-          <input type="radio" name="remember_${notification.id}" value="0.5" />
-          일부 기억함
-        </label>
-        <label>
-          <input type="radio" name="remember_${notification.id}" value="0" />
-          기억하지 못함
-        </label>
-      </div>
+      <p class="description" style="margin: 8px 0 12px;">
+        완벽한 문장이 아니어도 좋으니, 핵심 단어나 상황을 자유롭게 서술해 주십시오.
+      </p>
 
       <label>
-        기억나는 알림 내용을 적어 주세요.
+        기억나는 알림 내용
         <textarea 
-          name="recallText_${notification.id}" 
-          placeholder="예: 과제 제출 마감 알림이었던 것 같다."
+          name="freeRecallText" 
+          rows="8"
+          required
+          placeholder="예: 장학금 신청 마감 알림, 팀 회의가 곧 시작된다는 알림, 과제 제출 관련 알림..."
         ></textarea>
       </label>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2. 앞서 작성하신 '기억나는 알림'들의 내용은 각각 어떤 테두리 색상과 함께 나타났습니까?</strong><br />
+        작성하신 알림 내용과 그에 해당하는 색상(빨강, 초록, 파랑)을 짝지어 적어주십시오.
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <p class="description" style="margin: 8px 0 12px;">
+        예시: 장학금 알림 - 파란색, 화재 알림 - 빨간색
+      </p>
 
       <label>
-        이 알림 디자인이 눈에 잘 띄었다고 느꼈나요?
-        <select name="visibility_${notification.id}" required>
-          <option value="">선택</option>
-          <option value="1">1점 - 전혀 그렇지 않다</option>
-          <option value="2">2점</option>
-          <option value="3">3점 - 보통</option>
-          <option value="4">4점</option>
-          <option value="5">5점 - 매우 그렇다</option>
-        </select>
+        알림 내용과 색상 짝짓기
+        <textarea 
+          name="colorRecallText" 
+          rows="8"
+          required
+          placeholder="예: 장학금 신청 마감 알림 - 파란색&#10;팀 회의 알림 - 빨간색&#10;학교 굿즈 판매 알림 - 초록색"
+        ></textarea>
       </label>
-
-      <label>
-        이 알림 디자인에 대한 만족도는 어느 정도인가요?
-        <select name="satisfaction_${notification.id}" required>
-          <option value="">선택</option>
-          <option value="1">1점 - 매우 낮음</option>
-          <option value="2">2점</option>
-          <option value="3">3점 - 보통</option>
-          <option value="4">4점</option>
-          <option value="5">5점 - 매우 높음</option>
-        </select>
-      </label>
-    `;
-
-    surveyList.appendChild(item);
-  });
+    </div>
+  `;
 }
 
 /* 설문 제출 */
@@ -730,19 +698,10 @@ recallForm.addEventListener("submit", (event) => {
 
   const formData = new FormData(recallForm);
 
-  surveyResponses = shownNotifications.map((notification) => {
-    return {
-      notificationId: notification.id,
-      color: notification.color,
-      importance: notification.importance,
-      originalMessage: notification.message,
-      shownAtSecond: notification.shownAtSecond,
-      recallScore: formData.get(`remember_${notification.id}`),
-      recallText: formData.get(`recallText_${notification.id}`) || "",
-      visibilityScore: formData.get(`visibility_${notification.id}`),
-      satisfactionScore: formData.get(`satisfaction_${notification.id}`)
-    };
-  });
+  surveyResponses = {
+    freeRecallText: formData.get("freeRecallText") || "",
+    colorRecallText: formData.get("colorRecallText") || ""
+  };
 
   createSummary();
   showScreen(resultScreen);
@@ -753,34 +712,10 @@ recallForm.addEventListener("submit", (event) => {
    ============================== */
 
 function createSummary() {
-  const total = surveyResponses.length;
-
-  const recallSum = surveyResponses.reduce(
-    (sum, item) => sum + Number(item.recallScore),
-    0
-  );
-
-  const recallRate = total > 0 ? ((recallSum / total) * 100).toFixed(1) : 0;
-
-  const greenItems = surveyResponses.filter((item) => item.color === "green");
-  const highItems = surveyResponses.filter((item) => item.importance === "high");
-  const greenHighItems = surveyResponses.filter(
-    (item) => item.color === "green" && item.importance === "high"
-  );
-
-  const avg = (items, key) => {
-    if (items.length === 0) return 0;
-
-    const sum = items.reduce((acc, item) => acc + Number(item[key]), 0);
-    return (sum / items.length).toFixed(2);
-  };
-
   summaryBox.innerHTML = `
-    <strong>전체 알림 개수:</strong> ${total}개<br />
-    <strong>자가 보고 기준 전체 회상률:</strong> ${recallRate}%<br />
-    <strong>초록색 알림 평균 회상 점수:</strong> ${avg(greenItems, "recallScore")}점<br />
-    <strong>중요도 높음 알림 평균 회상 점수:</strong> ${avg(highItems, "recallScore")}점<br />
-    <strong>초록색 + 중요도 높음 평균 회상 점수:</strong> ${avg(greenHighItems, "recallScore")}점
+    <strong>사후 설문 응답이 저장되었습니다.</strong><br />
+    참가자가 자유 회상 문항 2개에 응답했습니다.<br />
+    아래 버튼을 눌러 CSV 파일로 저장할 수 있습니다.
   `;
 }
 
@@ -798,42 +733,24 @@ function downloadCSV() {
     "age",
     "gender",
     "experimentDate",
-    "notificationId",
-    "color",
-    "importance",
-    "originalMessage",
-    "shownAtSecond",
-    "recallScore",
-    "recallText",
-    "visibilityScore",
-    "satisfactionScore"
+    "freeRecallText",
+    "colorRecallText"
   ];
 
-  const rows = surveyResponses.map((item) => {
-    return [
-      participantInfo.participantId,
-      participantInfo.age,
-      participantInfo.gender,
-      participantInfo.experimentDate,
-      item.notificationId,
-      item.color,
-      item.importance,
-      item.originalMessage,
-      item.shownAtSecond,
-      item.recallScore,
-      item.recallText,
-      item.visibilityScore,
-      item.satisfactionScore
-    ];
-  });
+  const row = [
+    participantInfo.participantId,
+    participantInfo.age,
+    participantInfo.gender,
+    participantInfo.experimentDate,
+    surveyResponses.freeRecallText,
+    surveyResponses.colorRecallText
+  ];
 
   const csvContent = [
     headers.join(","),
-    ...rows.map((row) =>
-      row
-        .map((value) => `"${String(value).replaceAll('"', '""')}"`)
-        .join(",")
-    )
+    row
+      .map((value) => `"${String(value).replaceAll('"', '""')}"`)
+      .join(",")
   ].join("\n");
 
   const blob = new Blob(["\uFEFF" + csvContent], {
