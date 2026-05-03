@@ -746,7 +746,7 @@ function createRecallSurvey() {
           <span style="color: #ef4444;">*</span>
         </p>
 
-        <div class="radio-row">
+        <div class="radio-row likert-row">
           <span>매우 적음</span>
 
           <label>
@@ -784,7 +784,7 @@ function createRecallSurvey() {
           <span style="color: #ef4444;">*</span>
         </p>
 
-        <div class="radio-row">
+        <div class="radio-row likert-row">
           <span>전혀 촉박하지 않음</span>
 
           <label>
@@ -822,7 +822,7 @@ function createRecallSurvey() {
           <span style="color: #ef4444;">*</span>
         </p>
 
-        <div class="radio-row">
+        <div class="radio-row likert-row">
           <span>매우 적음</span>
 
           <label>
@@ -856,6 +856,7 @@ function createRecallSurvey() {
     </div>
   `;
 }
+
 
 /* 설문 제출 */
 
