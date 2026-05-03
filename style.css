@@ -633,3 +633,37 @@ textarea:focus {
     flex: 1;
   }
 }
+
+.likert-row {
+  gap: 8px;
+  align-items: center;
+}
+
+.likert-row label {
+  min-width: 34px;
+  height: 34px;
+  padding: 4px 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.likert-row input {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+}
+
+.likert-row span {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 700;
+}
