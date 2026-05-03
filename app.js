@@ -688,6 +688,172 @@ function createRecallSurvey() {
         ></textarea>
       </label>
     </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>3. 가장 눈에 띄었던 테두리의 색상은 무엇이었습니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <p class="description" style="margin: 8px 0 12px;">
+        단일 선택
+      </p>
+
+      <div class="radio-row">
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="빨간색" required />
+          빨간색
+        </label>
+
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="초록색" />
+          초록색
+        </label>
+
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="파랑색" />
+          파랑색
+        </label>
+
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="없음" />
+          없음
+        </label>
+      </div>
+
+      <label style="margin-top: 16px;">
+        위와 같이 고른 이유는 무엇입니까?
+        <textarea 
+          name="mostNoticeableReason" 
+          rows="5"
+          required
+          placeholder="예: 빨간색 테두리가 가장 강하게 느껴졌고, 다른 색보다 더 빠르게 눈에 들어왔습니다."
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p class="eyebrow">Subjective Cognitive Load</p>
+      <h3 style="margin: 0 0 10px;">주관적 인지 부하 평가</h3>
+
+      <p class="description" style="margin: 8px 0 18px;">
+        아래의 질문들을 확인하고 답해주시기 바랍니다.
+      </p>
+
+      <div class="likert-question">
+        <p>
+          <strong>4-1. 게임을 하면서 알림 내용을 함께 인지하기 위해 정신적, 인지적 노력을 얼마나 기울여야 했습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row">
+          <span>매우 적음</span>
+
+          <label>
+            <input type="radio" name="mentalEffort" value="1" required />
+            1
+          </label>
+
+          <label>
+            <input type="radio" name="mentalEffort" value="2" />
+            2
+          </label>
+
+          <label>
+            <input type="radio" name="mentalEffort" value="3" />
+            3
+          </label>
+
+          <label>
+            <input type="radio" name="mentalEffort" value="4" />
+            4
+          </label>
+
+          <label>
+            <input type="radio" name="mentalEffort" value="5" />
+            5
+          </label>
+
+          <span>매우 많음</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>4-2. 게임 진행 중 나타났다 사라지는 알림 시간이 정보를 파악하기에 얼마나 촉박하게 느껴졌습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row">
+          <span>전혀 촉박하지 않음</span>
+
+          <label>
+            <input type="radio" name="timePressure" value="1" required />
+            1
+          </label>
+
+          <label>
+            <input type="radio" name="timePressure" value="2" />
+            2
+          </label>
+
+          <label>
+            <input type="radio" name="timePressure" value="3" />
+            3
+          </label>
+
+          <label>
+            <input type="radio" name="timePressure" value="4" />
+            4
+          </label>
+
+          <label>
+            <input type="radio" name="timePressure" value="5" />
+            5
+          </label>
+
+          <span>매우 촉박함</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>4-3. 주어진 과업(게임과 알림 인지)을 수행하기 위해 귀하의 주의력을 얼마나 집중해야 했습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row">
+          <span>매우 적음</span>
+
+          <label>
+            <input type="radio" name="attentionDemand" value="1" required />
+            1
+          </label>
+
+          <label>
+            <input type="radio" name="attentionDemand" value="2" />
+            2
+          </label>
+
+          <label>
+            <input type="radio" name="attentionDemand" value="3" />
+            3
+          </label>
+
+          <label>
+            <input type="radio" name="attentionDemand" value="4" />
+            4
+          </label>
+
+          <label>
+            <input type="radio" name="attentionDemand" value="5" />
+            5
+          </label>
+
+          <span>매우 많음</span>
+        </div>
+      </div>
+    </div>
   `;
 }
 
@@ -700,7 +866,12 @@ recallForm.addEventListener("submit", (event) => {
 
   surveyResponses = {
     freeRecallText: formData.get("freeRecallText") || "",
-    colorRecallText: formData.get("colorRecallText") || ""
+    colorRecallText: formData.get("colorRecallText") || "",
+    mostNoticeableColor: formData.get("mostNoticeableColor") || "",
+    mostNoticeableReason: formData.get("mostNoticeableReason") || "",
+    mentalEffort: formData.get("mentalEffort") || "",
+    timePressure: formData.get("timePressure") || "",
+    attentionDemand: formData.get("attentionDemand") || ""
   };
 
   createSummary();
@@ -714,7 +885,7 @@ recallForm.addEventListener("submit", (event) => {
 function createSummary() {
   summaryBox.innerHTML = `
     <strong>사후 설문 응답이 저장되었습니다.</strong><br />
-    참가자가 자유 회상 문항 2개에 응답했습니다.<br />
+    참가자가 자유 회상, 색상 회상, 테두리 색상 인식, 주관적 인지 부하 평가에 응답했습니다.<br />
     아래 버튼을 눌러 CSV 파일로 저장할 수 있습니다.
   `;
 }
@@ -734,7 +905,12 @@ function downloadCSV() {
     "gender",
     "experimentDate",
     "freeRecallText",
-    "colorRecallText"
+    "colorRecallText",
+    "mostNoticeableColor",
+    "mostNoticeableReason",
+    "mentalEffort",
+    "timePressure",
+    "attentionDemand"
   ];
 
   const row = [
@@ -743,7 +919,12 @@ function downloadCSV() {
     participantInfo.gender,
     participantInfo.experimentDate,
     surveyResponses.freeRecallText,
-    surveyResponses.colorRecallText
+    surveyResponses.colorRecallText,
+    surveyResponses.mostNoticeableColor,
+    surveyResponses.mostNoticeableReason,
+    surveyResponses.mentalEffort,
+    surveyResponses.timePressure,
+    surveyResponses.attentionDemand
   ];
 
   const csvContent = [
