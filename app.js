@@ -31,11 +31,6 @@ const MAX_NOTIFICATION_TIME = EXPERIMENT_SECONDS - 15;
    DOM 요소
    ============================== */
 
-const startScreen = document.getElementById("startScreen");
-const experimentScreen = document.getElementById("experimentScreen");
-const surveyScreen = document.getElementById("surveyScreen");
-const resultScreen = document.getElementById("resultScreen");
-
 const participantForm = document.getElementById("participantForm");
 const recallForm = document.getElementById("recallForm");
 
@@ -54,6 +49,18 @@ const summaryBox = document.getElementById("summaryBox");
 const downloadCsvBtn = document.getElementById("downloadCsvBtn");
 const restartBtn = document.getElementById("restartBtn");
 
+const guideScreen = document.getElementById("guideScreen");
+const startScreen = document.getElementById("startScreen");
+const experimentScreen = document.getElementById("experimentScreen");
+const surveyScreen = document.getElementById("surveyScreen");
+const resultScreen = document.getElementById("resultScreen");
+
+const guideConfirmBtn = document.getElementById("guideConfirmBtn");
+const guideAgreeCheck = document.getElementById("guideAgreeCheck");
+
+const guideNextBtns = document.querySelectorAll(".guide-next-btn");
+const guidePrevBtns = document.querySelectorAll(".guide-prev-btn");
+const guidePages = document.querySelectorAll(".guide-page");
 /* ==============================
    실험 데이터 저장 변수
    ============================== */
@@ -112,7 +119,7 @@ const lowImportanceMessages = [
    ============================== */
 
 function showScreen(screen) {
-  [startScreen, experimentScreen, surveyScreen, resultScreen].forEach((s) => {
+  [guideScreen, startScreen, experimentScreen, surveyScreen, resultScreen].forEach((s) => {
     s.classList.remove("active");
   });
 
@@ -129,6 +136,61 @@ function shuffleArray(array) {
     .sort((a, b) => a.random - b.random)
     .map((item) => item.value);
 }
+
+
+
+/* ==============================
+   사전 안내 페이지 전환
+   ============================== */
+
+function showGuidePage(pageNumber) {
+  guidePages.forEach((page) => {
+    page.classList.remove("active");
+  });
+
+  const targetPage = document.getElementById(`guidePage${pageNumber}`);
+
+  if (targetPage) {
+    targetPage.classList.add("active");
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+guideNextBtns.forEach((button) => {
+  button.addEventListener("click", () => {
+    const nextPage = button.dataset.next;
+    showGuidePage(nextPage);
+  });
+});
+
+guidePrevBtns.forEach((button) => {
+  button.addEventListener("click", () => {
+    const prevPage = button.dataset.prev;
+    showGuidePage(prevPage);
+  });
+});
+
+/* ==============================
+   체크박스 확인 후 참가자 정보 입력 화면 이동
+   ============================== */
+
+guideAgreeCheck.addEventListener("change", () => {
+  guideConfirmBtn.disabled = !guideAgreeCheck.checked;
+});
+
+guideConfirmBtn.addEventListener("click", () => {
+  if (!guideAgreeCheck.checked) {
+    alert("안내사항 확인 체크박스를 먼저 선택해 주세요.");
+    return;
+  }
+
+  showScreen(startScreen);
+});
+
 
 /* ==============================
    참가자 정보 입력 후 실험 시작
@@ -857,10 +919,9 @@ function createRecallSurvey() {
   `;
 }
 
-
 /* 설문 제출 */
 
-recallForm.addEventListener("submit", (event) => {
+recallForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const formData = new FormData(recallForm);
@@ -875,8 +936,32 @@ recallForm.addEventListener("submit", (event) => {
     attentionDemand: formData.get("attentionDemand") || ""
   };
 
-  createSummary();
-  showScreen(resultScreen);
+  try {
+    const response = await fetch("/api/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        participantInfo,
+        surveyResponses,
+        shownNotifications,
+        score
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "저장 실패");
+    }
+
+    createSummary();
+    showScreen(resultScreen);
+  } catch (error) {
+    alert("서버에 결과를 저장하지 못했습니다. 관리자에게 알려주세요.");
+    console.error(error);
+  }
 });
 
 /* ==============================
