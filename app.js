@@ -91,27 +91,19 @@ let isPointerDown = false;
    ============================== */
 
 const highImportanceMessages = [
-  "오늘 18시까지 팀 프로젝트 보고서를 제출해야 합니다.",
-  "내일 오전 9시 전공 수업 발표 순서가 변경되었습니다.",
-  "장학금 신청 마감이 오늘 자정까지입니다.",
-  "교수님 면담 시간이 오늘 14시로 변경되었습니다.",
-  "중간고사 시험 강의실이 변경되었습니다.",
-  "오늘 17시까지 졸업요건 확인 서류를 제출해야 합니다.",
-  "팀 회의가 30분 뒤 시작됩니다.",
-  "수강 정정 신청 마감이 오늘까지입니다.",
-  "과제 피드백 확인 후 재제출이 필요합니다."
+  "오늘 18시 성적 장학금 신청 마감! 증빙 서류를 반드시 제출하세요.",
+  "최종 면접 합격 결과가 발표되었습니다. 사이트에서 확인하세요.",
+  "오늘 15시 수업 휴강 안내 및 보강 일정을 확인하세요.",
+  "급한 일이니 메시지 확인하는 대로 집으로 바로 전화해라.",
+  "2026-1학기 중간고사 성적 조회가 현재 가능합니다. 점수를 확인하세요."
 ];
 
 const lowImportanceMessages = [
-  "학생식당에 새로운 메뉴가 추가되었습니다.",
-  "동아리 홍보 부스가 학생회관 앞에서 운영 중입니다.",
-  "학교 앱 배경화면이 새롭게 업데이트되었습니다.",
-  "도서관 로비에서 사진 전시가 진행 중입니다.",
-  "캠퍼스 카페에서 시즌 음료를 판매합니다.",
-  "학교 굿즈 온라인 판매가 시작되었습니다.",
-  "학생회 SNS 이벤트가 진행 중입니다.",
-  "교내 산책로 야간 조명이 개선되었습니다.",
-  "이번 주 영화 동아리 상영작이 공개되었습니다."
+  "최근 3일간 걸음 수가 많이 부족합니다. 가벼운 산책을 권장합니다.",
+  "에스파 유튜브에서 업로드한 동영상: aespa 에스파 'Rich Man' MV 공개",
+  "ruwon님이 회원님의 게시물을 좋아합니다.",
+  "야식 출출하지 않으세요? 지금 주문하면 배달비 0원 쿠폰이 즉시 지급!",
+  "건조한 날씨로 산불이 발생할 위험이 높습니다."
 ];
 
 /* ==============================
@@ -709,7 +701,7 @@ function createRecallSurvey() {
   surveyList.innerHTML = `
     <div class="survey-item">
       <p>
-        <strong>1. 2048 게임을 수행하는 동안 화면에 여러 알림이 나타났습니다.</strong><br />
+        <strong>1-1. 2048 게임을 수행하는 동안 화면에 여러 알림이 나타났습니다.</strong><br />
         기억나는 알림의 내용들을 최대한 자세히, 모두 적어주십시오.
         <span style="color: #ef4444;">*</span>
       </p>
@@ -722,18 +714,18 @@ function createRecallSurvey() {
         기억나는 알림 내용
         <textarea 
           name="freeRecallText" 
-          rows="8"
+          rows="7"
           required
-          placeholder="예: 장학금 신청 마감 알림, 팀 회의가 곧 시작된다는 알림, 과제 제출 관련 알림..."
+          placeholder="예: 장학금 신청 마감 알림, 팀 회의 알림, 과제 제출 관련 알림..."
         ></textarea>
       </label>
     </div>
 
     <div class="survey-item">
       <p>
-        <strong>2. 앞서 작성하신 '기억나는 알림'들의 내용은 각각 어떤 테두리 색상과 함께 나타났습니까?</strong><br />
+        <strong>1-2. 앞서 작성하신 '기억나는 알림'들의 내용은 각각 어떤 테두리 색상과 함께 나타났습니까?</strong>
+        <span style="color: #ef4444;">*</span><br />
         작성하신 알림 내용과 그에 해당하는 색상(빨강, 초록, 파랑)을 짝지어 적어주십시오.
-        <span style="color: #ef4444;">*</span>
       </p>
 
       <p class="description" style="margin: 8px 0 12px;">
@@ -744,7 +736,7 @@ function createRecallSurvey() {
         알림 내용과 색상 짝짓기
         <textarea 
           name="colorRecallText" 
-          rows="8"
+          rows="7"
           required
           placeholder="예: 장학금 신청 마감 알림 - 파란색&#10;팀 회의 알림 - 빨간색&#10;학교 굿즈 판매 알림 - 초록색"
         ></textarea>
@@ -753,15 +745,36 @@ function createRecallSurvey() {
 
     <div class="survey-item">
       <p>
-        <strong>3. 가장 눈에 띄었던 테두리의 색상은 무엇이었습니까?</strong>
+        <strong>2-1. 앞선 설문(섹션 2)에서 답하였던 알림이 기억나는 이유는 무엇입니까?</strong>
         <span style="color: #ef4444;">*</span>
       </p>
 
       <p class="description" style="margin: 8px 0 12px;">
-        단일 선택
+        최대한 자세히 서술해 주십시오.
       </p>
 
-      <div class="radio-row">
+      <label>
+        기억나는 이유
+        <textarea 
+          name="memoryReason" 
+          rows="5"
+          required
+          placeholder="예: 빨간색 테두리가 눈에 띄어서 기억에 남았습니다."
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-2. 가장 눈에 띄었던 테두리의 색상은 무엇이었습니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <p class="description" style="margin: 8px 0 12px;">
+        단일 선택, 없으면 기타 선택 후 이유 작성 바랍니다.
+      </p>
+
+      <div class="radio-row vertical-radio-row">
         <label>
           <input type="radio" name="mostNoticeableColor" value="빨간색" required />
           빨간색
@@ -773,23 +786,79 @@ function createRecallSurvey() {
         </label>
 
         <label>
-          <input type="radio" name="mostNoticeableColor" value="파랑색" />
-          파랑색
+          <input type="radio" name="mostNoticeableColor" value="파란색" />
+          파란색
         </label>
 
         <label>
-          <input type="radio" name="mostNoticeableColor" value="없음" />
-          없음
+          <input type="radio" name="mostNoticeableColor" value="기타" />
+          기타
         </label>
       </div>
 
-      <label style="margin-top: 16px;">
-        위와 같이 고른 이유는 무엇입니까?
+      <label style="margin-top: 12px;">
+        기타 또는 추가 설명
+        <input 
+          type="text" 
+          name="mostNoticeableOther"
+          placeholder="예: 특별히 눈에 띄는 색상이 없었습니다."
+        />
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-3. 1번에서 고른 색상이 얼마나 기억력에 도움을 준 것 같습니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <div class="likert-question">
+        <div class="radio-row likert-row">
+          <span>매우 아니다</span>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="1" required />
+            1
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="2" />
+            2
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="3" />
+            3
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="4" />
+            4
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="5" />
+            5
+          </label>
+
+          <span>매우 그렇다</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-4. 위와 같이 고른 이유는 무엇입니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <label>
+        선택 이유
         <textarea 
-          name="mostNoticeableReason" 
+          name="colorChoiceReason" 
           rows="5"
           required
-          placeholder="예: 빨간색 테두리가 가장 강하게 느껴졌고, 다른 색보다 더 빠르게 눈에 들어왔습니다."
+          placeholder="예: 색상이 강하게 보여서 알림 내용과 함께 기억하기 쉬웠습니다."
         ></textarea>
       </label>
     </div>
@@ -798,43 +867,22 @@ function createRecallSurvey() {
       <p class="eyebrow">Subjective Cognitive Load</p>
       <h3 style="margin: 0 0 10px;">주관적 인지 부하 평가</h3>
 
-      <p class="description" style="margin: 8px 0 18px;">
-        아래의 질문들을 확인하고 답해주시기 바랍니다.
-      </p>
-
       <div class="likert-question">
         <p>
-          <strong>4-1. 게임을 하면서 알림 내용을 함께 인지하기 위해 정신적, 인지적 노력을 얼마나 기울여야 했습니까?</strong>
+          <strong>3-1. 게임하면서 알림 내용을 함께 인지하기 위해 정신적, 인지적 노력을 얼마나 기울여야 했습니까?</strong>
           <span style="color: #ef4444;">*</span>
         </p>
 
-        <div class="radio-row likert-row">
+        <div class="radio-row likert-row likert-row-seven">
           <span>매우 적음</span>
 
-          <label>
-            <input type="radio" name="mentalEffort" value="1" required />
-            1
-          </label>
-
-          <label>
-            <input type="radio" name="mentalEffort" value="2" />
-            2
-          </label>
-
-          <label>
-            <input type="radio" name="mentalEffort" value="3" />
-            3
-          </label>
-
-          <label>
-            <input type="radio" name="mentalEffort" value="4" />
-            4
-          </label>
-
-          <label>
-            <input type="radio" name="mentalEffort" value="5" />
-            5
-          </label>
+          <label><input type="radio" name="mentalEffort" value="1" required />1</label>
+          <label><input type="radio" name="mentalEffort" value="2" />2</label>
+          <label><input type="radio" name="mentalEffort" value="3" />3</label>
+          <label><input type="radio" name="mentalEffort" value="4" />4</label>
+          <label><input type="radio" name="mentalEffort" value="5" />5</label>
+          <label><input type="radio" name="mentalEffort" value="6" />6</label>
+          <label><input type="radio" name="mentalEffort" value="7" />7</label>
 
           <span>매우 많음</span>
         </div>
@@ -842,37 +890,20 @@ function createRecallSurvey() {
 
       <div class="likert-question">
         <p>
-          <strong>4-2. 게임 진행 중 나타났다 사라지는 알림 시간이 정보를 파악하기에 얼마나 촉박하게 느껴졌습니까?</strong>
+          <strong>3-2. 게임 진행 중 나타났다 사라지는 알림 시간이 정보를 파악하기에 시간이 얼마나 촉박했습니까?</strong>
           <span style="color: #ef4444;">*</span>
         </p>
 
-        <div class="radio-row likert-row">
+        <div class="radio-row likert-row likert-row-seven">
           <span>전혀 촉박하지 않음</span>
 
-          <label>
-            <input type="radio" name="timePressure" value="1" required />
-            1
-          </label>
-
-          <label>
-            <input type="radio" name="timePressure" value="2" />
-            2
-          </label>
-
-          <label>
-            <input type="radio" name="timePressure" value="3" />
-            3
-          </label>
-
-          <label>
-            <input type="radio" name="timePressure" value="4" />
-            4
-          </label>
-
-          <label>
-            <input type="radio" name="timePressure" value="5" />
-            5
-          </label>
+          <label><input type="radio" name="timePressure" value="1" required />1</label>
+          <label><input type="radio" name="timePressure" value="2" />2</label>
+          <label><input type="radio" name="timePressure" value="3" />3</label>
+          <label><input type="radio" name="timePressure" value="4" />4</label>
+          <label><input type="radio" name="timePressure" value="5" />5</label>
+          <label><input type="radio" name="timePressure" value="6" />6</label>
+          <label><input type="radio" name="timePressure" value="7" />7</label>
 
           <span>매우 촉박함</span>
         </div>
@@ -880,39 +911,43 @@ function createRecallSurvey() {
 
       <div class="likert-question">
         <p>
-          <strong>4-3. 주어진 과업(게임과 알림 인지)을 수행하기 위해 귀하의 주의력을 얼마나 집중해야 했습니까?</strong>
+          <strong>3-3. 주어진 과업(게임과 알림 인지)을 수행하기 위해 얼마나 집중해야 했습니까?</strong>
           <span style="color: #ef4444;">*</span>
         </p>
 
-        <div class="radio-row likert-row">
+        <div class="radio-row likert-row likert-row-seven">
           <span>매우 적음</span>
 
-          <label>
-            <input type="radio" name="attentionDemand" value="1" required />
-            1
-          </label>
-
-          <label>
-            <input type="radio" name="attentionDemand" value="2" />
-            2
-          </label>
-
-          <label>
-            <input type="radio" name="attentionDemand" value="3" />
-            3
-          </label>
-
-          <label>
-            <input type="radio" name="attentionDemand" value="4" />
-            4
-          </label>
-
-          <label>
-            <input type="radio" name="attentionDemand" value="5" />
-            5
-          </label>
+          <label><input type="radio" name="attentionDemand" value="1" required />1</label>
+          <label><input type="radio" name="attentionDemand" value="2" />2</label>
+          <label><input type="radio" name="attentionDemand" value="3" />3</label>
+          <label><input type="radio" name="attentionDemand" value="4" />4</label>
+          <label><input type="radio" name="attentionDemand" value="5" />5</label>
+          <label><input type="radio" name="attentionDemand" value="6" />6</label>
+          <label><input type="radio" name="attentionDemand" value="7" />7</label>
 
           <span>매우 많음</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>3-4. 본인이 생각하기에 주어진 과업(2048 게임 플레이 및 알림 내용 파악)을 얼마나 성공적으로 완수했다고 생각하십니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row likert-row likert-row-seven">
+          <span>완벽하게 실패함</span>
+
+          <label><input type="radio" name="taskSuccess" value="1" required />1</label>
+          <label><input type="radio" name="taskSuccess" value="2" />2</label>
+          <label><input type="radio" name="taskSuccess" value="3" />3</label>
+          <label><input type="radio" name="taskSuccess" value="4" />4</label>
+          <label><input type="radio" name="taskSuccess" value="5" />5</label>
+          <label><input type="radio" name="taskSuccess" value="6" />6</label>
+          <label><input type="radio" name="taskSuccess" value="7" />7</label>
+
+          <span>완벽하게 성공함</span>
         </div>
       </div>
     </div>
@@ -929,11 +964,15 @@ recallForm.addEventListener("submit", async (event) => {
   surveyResponses = {
     freeRecallText: formData.get("freeRecallText") || "",
     colorRecallText: formData.get("colorRecallText") || "",
+    memoryReason: formData.get("memoryReason") || "",
     mostNoticeableColor: formData.get("mostNoticeableColor") || "",
-    mostNoticeableReason: formData.get("mostNoticeableReason") || "",
+    mostNoticeableOther: formData.get("mostNoticeableOther") || "",
+    colorMemoryHelp: formData.get("colorMemoryHelp") || "",
+    colorChoiceReason: formData.get("colorChoiceReason") || "",
     mentalEffort: formData.get("mentalEffort") || "",
     timePressure: formData.get("timePressure") || "",
-    attentionDemand: formData.get("attentionDemand") || ""
+    attentionDemand: formData.get("attentionDemand") || "",
+    taskSuccess: formData.get("taskSuccess") || ""
   };
 
   try {
@@ -992,11 +1031,15 @@ function downloadCSV() {
     "experimentDate",
     "freeRecallText",
     "colorRecallText",
+    "memoryReason",
     "mostNoticeableColor",
-    "mostNoticeableReason",
+    "mostNoticeableOther",
+    "colorMemoryHelp",
+    "colorChoiceReason",
     "mentalEffort",
     "timePressure",
-    "attentionDemand"
+    "attentionDemand",
+    "taskSuccess"
   ];
 
   const row = [
@@ -1006,11 +1049,15 @@ function downloadCSV() {
     participantInfo.experimentDate,
     surveyResponses.freeRecallText,
     surveyResponses.colorRecallText,
+    surveyResponses.memoryReason,
     surveyResponses.mostNoticeableColor,
-    surveyResponses.mostNoticeableReason,
+    surveyResponses.mostNoticeableOther,
+    surveyResponses.colorMemoryHelp,
+    surveyResponses.colorChoiceReason,
     surveyResponses.mentalEffort,
     surveyResponses.timePressure,
-    surveyResponses.attentionDemand
+    surveyResponses.attentionDemand,
+    surveyResponses.taskSuccess
   ];
 
   const csvContent = [
