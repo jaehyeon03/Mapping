@@ -348,10 +348,21 @@ function endExperiment() {
   clearInterval(experimentTimer);
   notificationToast.classList.add("hidden");
 
+  // 실험 화면에서 걸어둔 스크롤 잠금 해제
   document.body.classList.remove("lock-scroll");
+  document.body.style.overflow = "";
+  document.body.style.height = "";
+  document.body.style.position = "";
+  document.body.style.width = "";
 
   createRecallSurvey();
   showScreen(surveyScreen);
+
+  // 설문 시작 시 화면 맨 위로 이동
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 /* =========================================================
