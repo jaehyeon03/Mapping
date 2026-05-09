@@ -13,19 +13,28 @@
    실험 설정값
    ============================== */
 
-// 게임 시간: 3분 = 180초
+// 게임 시간: 5분 = 300초
 const EXPERIMENT_SECONDS = 3;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
 
-// 전체 알림 개수
-// 색상 3개 x 중요도 2개 x 반복 3회 = 18개
-const NOTIFICATION_COUNT = 18;
+// 알림 표시 시간(초 단위)
+const NOTIFICATION_VISIBLE_SECONDS = NOTIFICATION_VISIBLE_MS / 1000;
 
-// 알림 제시 최소/최대 시점
-const MIN_NOTIFICATION_TIME = 12;
-const MAX_NOTIFICATION_TIME = EXPERIMENT_SECONDS - 15;
+// 전체 알림 개수
+// 중요 알림 5개 + 비중요 알림 5개 = 총 10개
+const NOTIFICATION_COUNT = 10;
+
+// 게임 시작 후 30초 동안은 알림이 나오지 않음
+const MIN_NOTIFICATION_TIME = 30;
+
+// 알림은 30초 ~ 180초 구간에서만 제시
+// 즉, 2분 30초 동안 알림 제시 후 마지막 2분은 게임에만 집중
+const NOTIFICATION_END_TIME = 180;
+
+// 마지막 알림도 180초 전에 사라지도록 최대 표시 시점 설정
+const MAX_NOTIFICATION_TIME = NOTIFICATION_END_TIME - NOTIFICATION_VISIBLE_SECONDS;
 
 /* ==============================
    DOM 요소
@@ -248,53 +257,76 @@ function updateTimerDisplay() {
    ============================== */
 
 function createNotificationSchedule() {
+  // 알림 테두리 색상
   const colors = ["red", "green", "blue"];
-  const importanceLevels = ["high", "low"];
 
-  let baseConditions = [];
+  // 5개 알림에 색상을 최대한 고르게 배정하는 함수
+  function createBalancedColors(count) {
+    const result = [];
 
-  for (let repeat = 0; repeat < 3; repeat++) {
-    colors.forEach((color) => {
-      importanceLevels.forEach((importance) => {
-        baseConditions.push({
-          color,
-          importance
-        });
-      });
-    });
+    while (result.length < count) {
+      result.push(...shuffleArray(colors));
+    }
+
+    return shuffleArray(result.slice(0, count));
   }
 
-  baseConditions = shuffleArray(baseConditions).slice(0, NOTIFICATION_COUNT);
+  const highColors = createBalancedColors(highImportanceMessages.length);
+  const lowColors = createBalancedColors(lowImportanceMessages.length);
+
+  // 중요 알림 5개 생성
+  const highNotifications = shuffleArray(highImportanceMessages).map((message, index) => {
+    return {
+      color: highColors[index],
+      importance: "high",
+      message
+    };
+  });
+
+  // 비중요 알림 5개 생성
+  const lowNotifications = shuffleArray(lowImportanceMessages).map((message, index) => {
+    return {
+      color: lowColors[index],
+      importance: "low",
+      message
+    };
+  });
+
+  // 중요 5개 + 비중요 5개를 합친 뒤 순서 랜덤화
+  const baseConditions = shuffleArray([
+    ...highNotifications,
+    ...lowNotifications
+  ]);
 
   const randomTimes = [];
 
-  const availableStart = MIN_NOTIFICATION_TIME;
-  const availableEnd = MAX_NOTIFICATION_TIME;
+  const availableStart = MIN_NOTIFICATION_TIME; // 30초
+  const availableEnd = MAX_NOTIFICATION_TIME;   // 175초
+
+  // 30초 ~ 175초 구간을 알림 10개가 들어갈 수 있도록 나눔
   const totalRange = availableEnd - availableStart;
-  const interval = Math.floor(totalRange / baseConditions.length);
+  const interval = totalRange / NOTIFICATION_COUNT;
 
-  for (let i = 0; i < baseConditions.length; i++) {
-    const baseTime = availableStart + i * interval;
+  for (let i = 0; i < NOTIFICATION_COUNT; i++) {
+    const sectionStart = availableStart + i * interval;
+    const sectionEnd = availableStart + (i + 1) * interval;
 
-    // 너무 규칙적으로 나오지 않게 0~4초 정도 흔들림 추가
-    const jitter = Math.floor(Math.random() * 5);
+    // 각 구간 안에서 랜덤 시점 선택
+    const randomTime = Math.floor(
+      sectionStart + Math.random() * (sectionEnd - sectionStart)
+    );
 
-    randomTimes.push(Math.min(baseTime + jitter, availableEnd));
+    randomTimes.push(Math.min(randomTime, availableEnd));
   }
 
   randomTimes.sort((a, b) => a - b);
 
   notificationSchedule = baseConditions.map((condition, index) => {
-    const messagePool =
-      condition.importance === "high"
-        ? highImportanceMessages
-        : lowImportanceMessages;
-
     return {
       id: `N${String(index + 1).padStart(2, "0")}`,
       color: condition.color,
       importance: condition.importance,
-      message: messagePool[index % messagePool.length],
+      message: condition.message,
       showAt: randomTimes[index],
       displayed: false
     };
