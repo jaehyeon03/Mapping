@@ -14,7 +14,7 @@
    ============================== */
 
 // 게임 시간: 5분 = 300초
-const EXPERIMENT_SECONDS = 3;
+const EXPERIMENT_SECONDS = 300;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
@@ -1004,6 +1004,7 @@ recallForm.addEventListener("submit", async (event) => {
 
   const formData = new FormData(recallForm);
 
+  // 사후 설문 응답 저장
   surveyResponses = {
     freeRecallText: formData.get("freeRecallText") || "",
     colorRecallText: formData.get("colorRecallText") || "",
@@ -1018,34 +1019,33 @@ recallForm.addEventListener("submit", async (event) => {
     taskSuccess: formData.get("taskSuccess") || ""
   };
 
+  // Google Apps Script로 보낼 전체 데이터
+  const payload = {
+    participantInfo: participantInfo,
+    surveyResponses: surveyResponses,
+    shownNotifications: shownNotifications,
+    score: score
+  };
+
   try {
-    const response = await fetch("/api/responses", {
+    await fetch("https://script.google.com/macros/s/AKfycbyDKRiAO2JpD1hwkzVFAEM2XnzMRjy6wq5MYZ3PqF47_M5k4aaZ-CuxS940HW5q-MkX/exec", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        participantInfo,
-        surveyResponses,
-        shownNotifications,
-        score
-      })
+      mode: "no-cors",
+      body: JSON.stringify(payload)
     });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.message || "저장 실패");
-    }
 
     createSummary();
     showScreen(resultScreen);
+
   } catch (error) {
-    alert("서버에 결과를 저장하지 못했습니다. 관리자에게 알려주세요.");
-    console.error(error);
+    console.error("전송 에러:", error);
+
+    alert("결과 전송 중 오류가 발생했습니다. 관리자에게 알려주세요.");
+
+    createSummary();
+    showScreen(resultScreen);
   }
 });
-
 /* ==============================
    결과 요약 생성
    ============================== */
