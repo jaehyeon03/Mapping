@@ -13,7 +13,7 @@
    실험 설정값
    ============================== */
 // 게임 시간: 5분 = 300초
-const EXPERIMENT_SECONDS = 300;
+const EXPERIMENT_SECONDS = 60;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
@@ -1054,7 +1054,6 @@ function createSummary() {
   summaryBox.innerHTML = `
     <strong>사후 설문 응답이 저장되었습니다.</strong><br />
     참가자가 자유 회상, 색상 회상, 테두리 색상 인식, 주관적 인지 부하 평가에 응답했습니다.<br />
-    아래 버튼을 눌러 CSV 파일로 저장할 수 있습니다.
   `;
 }
 
