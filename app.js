@@ -13,7 +13,7 @@
    실험 설정값
    ============================== */
 // 게임 시간: 5분 = 300초
-const EXPERIMENT_SECONDS = 300;
+const EXPERIMENT_SECONDS = 3;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
