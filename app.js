@@ -786,7 +786,7 @@ function createRecallSurvey() {
 
     <div class="survey-item">
       <p>
-        <strong>2-1. 앞선 설문(섹션 2)에서 답하였던 알림이 기억나는 이유는 무엇입니까?</strong>
+        <strong>2-1. 앞선 설문(섹션 1)에서 답하였던 알림이 기억나는 이유는 무엇입니까?</strong>
         <span style="color: #ef4444;">*</span>
       </p>
 
