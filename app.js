@@ -1053,8 +1053,8 @@ recallForm.addEventListener("submit", async (event) => {
 function createSummary() {
   summaryBox.innerHTML = `
     <strong>사후 설문 응답이 저장되었습니다.</strong><br />
-    참가자가 자유 회상, 색상 회상, 테두리 색상 인식, 주관적 인지 부하 평가에 응답했습니다.<br />
-    아래 버튼을 눌러 CSV 파일로 저장할 수 있습니다.
+    실험 결과가 연구자의 Google Sheet로 자동 전송되었습니다.<br />
+    참여해 주셔서 감사합니다.
   `;
 }
 
