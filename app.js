@@ -13,7 +13,7 @@
    실험 설정값
    ============================== */
 // 게임 시간: 5분 = 300초
-const EXPERIMENT_SECONDS = 60;
+const EXPERIMENT_SECONDS = 300;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
@@ -1029,9 +1029,11 @@ recallForm.addEventListener("submit", async (event) => {
     await fetch("https://script.google.com/macros/s/AKfycbzebPchNt96txg9V7PLWU6L_-IK1szmCqXMHfRcw-l5lHC3YuairFgoZg9yL2Rp2JxU/exec", {
       method: "POST",
       mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
       body: JSON.stringify(payload)
     });
-
 
     createSummary();
     showScreen(resultScreen);
@@ -1054,6 +1056,7 @@ function createSummary() {
   summaryBox.innerHTML = `
     <strong>사후 설문 응답이 저장되었습니다.</strong><br />
     참가자가 자유 회상, 색상 회상, 테두리 색상 인식, 주관적 인지 부하 평가에 응답했습니다.<br />
+    아래 버튼을 눌러 CSV 파일로 저장할 수 있습니다.
   `;
 }
 
@@ -1061,10 +1064,11 @@ function createSummary() {
    CSV 다운로드
    ========================================================= */
 
-downloadCsvBtn.addEventListener("click", () => {
-  downloadCSV();
-});
-
+if (downloadCsvBtn) {
+  downloadCsvBtn.addEventListener("click", () => {
+    downloadCSV();
+  });
+}
 function downloadCSV() {
   const headers = [
     "participantId",
