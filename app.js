@@ -1026,11 +1026,12 @@ recallForm.addEventListener("submit", async (event) => {
   };
 
   try {
-    await fetch(window.APP_CONFIG.GOOGLE_SCRIPT_URL, {
+    await fetch("https://script.google.com/macros/s/AKfycbzebPchNt96txg9V7PLWU6L_-IK1szmCqXMHfRcw-l5lHC3YuairFgoZg9yL2Rp2JxU/exec", {
       method: "POST",
       mode: "no-cors",
       body: JSON.stringify(payload)
     });
+
 
     createSummary();
     showScreen(resultScreen);
