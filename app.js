@@ -12,7 +12,6 @@
 /* ==============================
    실험 설정값
    ============================== */
-
 // 게임 시간: 5분 = 300초
 const EXPERIMENT_SECONDS = 300;
 
@@ -332,7 +331,6 @@ function createNotificationSchedule() {
     };
   });
 }
-
 /* ==============================
    알림 표시 시점 확인
    ============================== */
@@ -1028,7 +1026,7 @@ recallForm.addEventListener("submit", async (event) => {
   };
 
   try {
-    await fetch("https://script.google.com/macros/s/AKfycbyDKRiAO2JpD1hwkzVFAEM2XnzMRjy6wq5MYZ3PqF47_M5k4aaZ-CuxS940HW5q-MkX/exec", {
+    await fetch(window.APP_CONFIG.GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
       body: JSON.stringify(payload)
@@ -1046,6 +1044,7 @@ recallForm.addEventListener("submit", async (event) => {
     showScreen(resultScreen);
   }
 });
+
 /* ==============================
    결과 요약 생성
    ============================== */
@@ -1053,8 +1052,8 @@ recallForm.addEventListener("submit", async (event) => {
 function createSummary() {
   summaryBox.innerHTML = `
     <strong>사후 설문 응답이 저장되었습니다.</strong><br />
-    실험 결과가 연구자의 Google Sheet로 자동 전송되었습니다.<br />
-    참여해 주셔서 감사합니다.
+    참가자가 자유 회상, 색상 회상, 테두리 색상 인식, 주관적 인지 부하 평가에 응답했습니다.<br />
+    아래 버튼을 눌러 CSV 파일로 저장할 수 있습니다.
   `;
 }
 
