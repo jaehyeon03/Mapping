@@ -1028,7 +1028,7 @@ recallForm.addEventListener("submit", async (event) => {
   };
 
   try {
-    await fetch("https://script.google.com/macros/s/AKfycbzebPchNt96txg9V7PLWU6L_-IK1szmCqXMHfRcw-l5lHC3YuairFgoZg9yL2Rp2JxU/exec", {
+    await fetch("https://script.google.com/macros/s/AKfycbwkdoRIkkYnXjz-OcuKmn2I_PlG_FUzNVGpsk74_vvhYuZ8E5YPmgUPFcWfOccxdZg/exec", {
       method: "POST",
       mode: "no-cors",
       headers: {
