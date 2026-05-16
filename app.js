@@ -22,8 +22,8 @@ const NOTIFICATION_VISIBLE_MS = 5000;
 const NOTIFICATION_VISIBLE_SECONDS = NOTIFICATION_VISIBLE_MS / 1000;
 
 // 전체 알림 개수
-// 중요 알림 5개 + 비중요 알림 5개 = 총 10개
-const NOTIFICATION_COUNT = 10;
+// 중요 알림 6개 + 비중요 알림 6개 = 총 12개
+const NOTIFICATION_COUNT = 12;
 
 // 게임 시작 후 30초 동안은 알림이 나오지 않음
 const MIN_NOTIFICATION_TIME = 30;
@@ -103,7 +103,8 @@ const highImportanceMessages = [
   "최종 면접 합격 결과가 발표되었습니다. 사이트에서 확인하세요.",
   "오늘 15시 수업 휴강 안내 및 보강 일정을 확인하세요.",
   "급한 일이니 메시지 확인하는 대로 집으로 바로 전화해라.",
-  "2026-1학기 중간고사 성적 조회가 현재 가능합니다. 점수를 확인하세요."
+  "2026-1학기 중간고사 성적 조회가 현재 가능합니다. 점수를 확인하세요.",
+  "오늘 저녁 7시 정기 총회 장소가 [공학관 201호]로 변경되었습니다."
 ];
 
 const lowImportanceMessages = [
@@ -111,7 +112,8 @@ const lowImportanceMessages = [
   "에스파 유튜브에서 업로드한 동영상: aespa 에스파 'Rich Man' MV 공개",
   "ruwon님이 회원님의 게시물을 좋아합니다.",
   "야식 출출하지 않으세요? 지금 주문하면 배달비 0원 쿠폰이 즉시 지급!",
-  "건조한 날씨로 산불이 발생할 위험이 높습니다."
+  "건조한 날씨로 산불이 발생할 위험이 높습니다.",
+  "지금 만보기 미션 완료! 10000원을 받으러 아래 버튼을 클릭하세요."
 ];
 
 /* ==============================
@@ -786,7 +788,7 @@ function createRecallSurvey() {
 
     <div class="survey-item">
       <p>
-        <strong>2-1. 앞선 설문(섹션 1)에서 답하였던 알림이 기억나는 이유는 무엇입니까?</strong>
+        <strong>2-1. 앞선 설문(섹션 2)에서 답하였던 알림이 기억나는 이유는 무엇입니까?</strong>
         <span style="color: #ef4444;">*</span>
       </p>
 
@@ -1069,6 +1071,7 @@ if (downloadCsvBtn) {
     downloadCSV();
   });
 }
+
 function downloadCSV() {
   const headers = [
     "participantId",
