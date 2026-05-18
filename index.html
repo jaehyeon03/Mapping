@@ -205,7 +205,7 @@
             </button>
 
             <button id="guideConfirmBtn" type="button" class="primary-btn" disabled>
-              참가자 정보 입력하기
+              실험 시작 화면으로 이동
             </button>
           </div>
         </div>
@@ -219,32 +219,12 @@
         <p class="eyebrow">HCI Recall Experiment</p>
         <h1>알림 색상과 정보 중요도가<br />사용자 회상에 미치는 영향</h1>
 
-        <p class="description">
-          아래의 참가자 기본 정보를 입력한 뒤 실험을 시작해 주세요.
-          입력된 정보는 실험 결과 분석을 위한 용도로만 사용됩니다.
+        <p class="description" style="margin-bottom: 30px;">
+          본 실험은 게임 플레이 중 나타나는 색상별 알림에 대한 기억 요소를 측정합니다.<br />
+          아래 버튼을 누르면 <strong>4분간의 2048 게임</strong> 및 알림 실험이 즉시 시작됩니다.
         </p>
 
-        <!-- 참가자 기본 정보 입력 -->
         <form id="participantForm" class="form">
-          <label>
-            참가자 ID
-            <input type="text" id="participantId" placeholder="예: 김재현" required />
-          </label>
-
-          <label>
-            나이
-            <input type="number" id="age" min="18" max="80" placeholder="예: 20" required />
-          </label>
-
-          <label>
-            성별
-            <select id="gender" required>
-              <option value="">선택</option>
-              <option value="남성">남성</option>
-              <option value="여성">여성</option>
-            </select>
-          </label>
-
           <button type="submit" class="primary-btn">실험 시작하기</button>
         </form>
       </div>
@@ -309,19 +289,29 @@
 
     <!-- 회상 설문 화면 -->
     <section id="surveyScreen" class="screen">
-      <div class="card survey-card">
+      <div class="card survey-card" style="width: min(760px, 100%);">
         <p class="eyebrow">Post Recall Survey</p>
         <h2>사후 회상 설문</h2>
 
         <p class="description">
-          방금 게임 중 나타났던 알림을 얼마나 기억하는지 응답해 주세요.
-          정확한 문장이 아니어도 기억나는 내용을 자유롭게 적으면 됩니다.
+          아래의 구글 폼 설문을 읽고 답변을 제출해 주세요.<br>
+          <strong>구글 폼 제출을 완전히 완료하신 후</strong> 하단의 [실험 종료 및 결과 확인] 버튼을 눌러주세요.
         </p>
 
-        <form id="recallForm" class="survey-form">
-          <div id="surveyList"></div>
+        <div style="width: 100%; height: 600px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 14px; margin-bottom: 20px;">
+          <iframe 
+            src="https://docs.google.com/forms/d/e/1FAIpQLSda6KugSI8XppMNQ4AB2SbtIqOcdLPhxwwgfUXGDaCcV8XDsA/viewform?embedded=true" 
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            marginheight="0" 
+            marginwidth="0">
+            로드 중...
+          </iframe>
+        </div>
 
-          <button type="submit" class="primary-btn">결과 저장하기</button>
+        <form id="recallForm" class="survey-form">
+          <div id="surveyList" style="display:none;"></div> <button type="submit" class="primary-btn">실험 종료 및 결과 확인</button>
         </form>
       </div>
     </section>
