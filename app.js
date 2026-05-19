@@ -13,7 +13,7 @@
    실험 설정값
    ============================== */
 // 게임 시간: 4분 = 240초
-const EXPERIMENT_SECONDS = 1;
+const EXPERIMENT_SECONDS = 240;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
@@ -201,32 +201,14 @@ guideConfirmBtn.addEventListener("click", () => {
 participantForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  // 데이터 구조 유지 및 에러 방지를 위한 고유 ID 자동 생성
   participantInfo = {
-    participantId: "P_" + Date.now(),
-    age: "N/A",
-    gender: "N/A",
-    experimentDate: new Date().toLocaleDateString("ko-KR")
+    participantId: document.getElementById("participantId").value.trim(),
+    age: document.getElementById("age").value,
+    gender: document.getElementById("gender").value,
+    experimentDate: new Date().toLocaleString()
   };
 
-  // 1. [중요] index.html에 정의된 ID에 맞게 experimentScreen 요소를 지정하여 화면 전환
-  if (typeof showScreen === "function" && typeof experimentScreen !== "undefined") {
-    showScreen(experimentScreen);
-  } else {
-    // 만약 상단에 변수 선언이 안 되어 있을 경우를 대비한 대체 코드
-    const expScreen = document.getElementById("experimentScreen");
-    if (expScreen) {
-      [guideScreen, startScreen, experimentScreen, surveyScreen, resultScreen].forEach((s) => {
-        if(s) s.classList.remove("active");
-      });
-      expScreen.classList.add("active");
-    }
-  }
-
-  // 2. 4분 실험 타이머 및 게임 초기화 가동
   startExperiment();
-  
-  window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 /* ==============================
@@ -405,6 +387,7 @@ function endExperiment() {
   document.body.style.position = "";
   document.body.style.width = "";
 
+  createRecallSurvey();
   showScreen(surveyScreen);
 
   // 설문 시작 시 화면 맨 위로 이동
@@ -752,6 +735,460 @@ boardEl.addEventListener("pointercancel", () => {
 });
 
 /* =========================================================
+   사후 회상 설문
+   ========================================================= */
+
+function createRecallSurvey() {
+  surveyList.innerHTML = "";
+
+  surveyList.innerHTML = `
+    <div class="survey-item">
+      <p>
+        <strong>1-1. 2048 게임을 수행하는 동안 화면에 여러 알림이 나타났습니다.</strong><br />
+        기억나는 알림의 내용들을 최대한 자세히, 모두 적어주십시오.
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <p class="description" style="margin: 8px 0 12px;">
+        완벽한 문장이 아니어도 좋으니, 핵심 단어나 상황을 자유롭게 서술해 주십시오.
+      </p>
+
+      <label>
+        기억나는 알림 내용
+        <textarea 
+          name="freeRecallText" 
+          rows="7"
+          required
+          placeholder="예: 장학금 신청 마감 알림, 팀 회의 알림, 과제 제출 관련 알림..."
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>1-2. 앞서 작성하신 '기억나는 알림'들의 내용은 각각 어떤 테두리 색상과 함께 나타났습니까?</strong>
+        <span style="color: #ef4444;">*</span><br />
+        작성하신 알림 내용과 그에 해당하는 색상(빨강, 초록, 파랑)을 짝지어 적어주십시오.
+      </p>
+
+      <p class="description" style="margin: 8px 0 12px;">
+        예시: 장학금 알림 - 파란색, 화재 알림 - 빨간색
+      </p>
+
+      <label>
+        알림 내용과 색상 짝짓기
+        <textarea 
+          name="colorRecallText" 
+          rows="7"
+          required
+          placeholder="예: 장학금 신청 마감 알림 - 파란색&#10;팀 회의 알림 - 빨간색&#10;학교 굿즈 판매 알림 - 초록색"
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-1. 앞선 설문(섹션 2)에서 답하였던 알림이 기억나는 '원인'은 무엇이라고 생각합니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <p class="description" style="margin: 8px 0 12px;">
+        단일 선택
+      </p>
+
+      <div class="radio-row vertical-radio-row">
+        <label>
+          <input type="radio" name="memoryReasonCause" value="알림의 내용" required />
+          알림의 내용
+        </label>
+
+        <label>
+          <input type="radio" name="memoryReasonCause" value="알림의 색상" />
+          알림의 색상
+        </label>
+
+        <label>
+          <input type="radio" name="memoryReasonCause" value="둘 다" />
+          둘 다
+        </label>
+
+      </div>
+
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-2. 위와 같이 고른 이유는 무엇입니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <label>
+        선택 이유
+        <textarea 
+          name="memoryReasonDetail" 
+          rows="5"
+          required
+          placeholder="최대한 자세히 서술해 주십시오"
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-3. 가장 눈에 띄었던 테두리의 색상은 무엇이었습니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <p class="description" style="margin: 8px 0 12px;">
+        단일 선택
+      </p>
+
+      <div class="radio-row vertical-radio-row">
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="빨간색" required />
+          빨간색
+        </label>
+
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="초록색" />
+          초록색
+        </label>
+
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="파란색" />
+          파란색
+        </label>
+
+        <label>
+          <input type="radio" name="mostNoticeableColor" value="없음" />
+          없음
+        </label>
+      </div>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-4. 위와 같이 고른 이유는 무엇입니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <label>
+        선택 이유
+        <textarea 
+          name="colorReasonDetail" 
+          rows="5"
+          required
+          placeholder="최대한 자세히 서술해 주십시오"
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-5. 응답한 색상이 얼마나 기억(회상)에 도움을 준 것 같습니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <div class="likert-question">
+        <div class="radio-row likert-row">
+          <span>매우 아니다</span>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="1" required />
+            1
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="2" />
+            2
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="3" />
+            3
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="4" />
+            4
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="5" />
+            5
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="1" required />
+            6
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="2" />
+            7
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="3" />
+            8
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="4" />
+            9
+          </label>
+
+          <label>
+            <input type="radio" name="colorMemoryHelp" value="5" />
+            10
+          </label>         
+
+          <span>매우 그렇다</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="survey-item">
+      <p>
+        <strong>2-6. 위와 같이 응답한 이유는 무엇입니까?</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      <label>
+        선택 이유
+        <textarea 
+          name="colorChoiceReason" 
+          rows="5"
+          required
+          placeholder="예: 색상이 강하게 보여서 알림 내용과 함께 기억하기 쉬웠습니다."
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="survey-item">
+      <p class="eyebrow">Subjective Cognitive Load</p>
+      <h3 style="margin: 0 0 10px;">주관적 인지 부하 평가</h3>
+
+      <div class="likert-question">
+        <p>
+          <strong>3-1. 게임하면서 알림 내용을 함께 인지하기 위해 얼마나 많은 정신적, 지각적 활동이 요구되었습니까?
+그 과제는 쉬웠습니까, 어려웠습니까? 단순했습니까, 복잡했습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row likert-row likert-row-seven">
+          <span>매우 쉬움</span>
+
+          <label><input type="radio" name="mentalEffort" value="1" required />1</label>
+          <label><input type="radio" name="mentalEffort" value="2" />2</label>
+          <label><input type="radio" name="mentalEffort" value="3" />3</label>
+          <label><input type="radio" name="mentalEffort" value="4" />4</label>
+          <label><input type="radio" name="mentalEffort" value="5" />5</label>
+          <label><input type="radio" name="mentalEffort" value="6" />6</label>
+          <label><input type="radio" name="mentalEffort" value="7" />7</label>
+          <label><input type="radio" name="mentalEffort" value="8" />8</label>
+          <label><input type="radio" name="mentalEffort" value="9" />9</label>
+          <label><input type="radio" name="mentalEffort" value="10" />10</label>
+
+          <span>매우 어려움</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>3-2. 게임하면서 얼마나 많은 신체 활동이 필요했습니까?
+그 일은 쉬웠습니까, 어려웠습니까? 느긋했습니까, 아니면 힘들었습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row likert-row likert-row-seven">
+          <span>매우 쉬움</span>
+
+          <label><input type="radio" name="timePressure" value="1" required />1</label>
+          <label><input type="radio" name="timePressure" value="2" />2</label>
+          <label><input type="radio" name="timePressure" value="3" />3</label>
+          <label><input type="radio" name="timePressure" value="4" />4</label>
+          <label><input type="radio" name="timePressure" value="5" />5</label>
+          <label><input type="radio" name="timePressure" value="6" />6</label>
+          <label><input type="radio" name="timePressure" value="7" />7</label>
+          <label><input type="radio" name="timePressure" value="8" />8</label>
+          <label><input type="radio" name="timePressure" value="9" />9</label>
+          <label><input type="radio" name="timePressure" value="10" />10</label>          
+
+          <span>매우 어려움</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>3-3. 게임을 하면서 알림을 확인할 때 시간적 압박을 얼마나 느꼈습니까?
+진행 속도는 느렸습니까, 아니면 빨랐습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row likert-row likert-row-seven">
+          <span>전혀 촉박하지 않음</span>
+
+          <label><input type="radio" name="attentionDemand" value="1" required />1</label>
+          <label><input type="radio" name="attentionDemand" value="2" />2</label>
+          <label><input type="radio" name="attentionDemand" value="3" />3</label>
+          <label><input type="radio" name="attentionDemand" value="4" />4</label>
+          <label><input type="radio" name="attentionDemand" value="5" />5</label>
+          <label><input type="radio" name="attentionDemand" value="6" />6</label>
+          <label><input type="radio" name="attentionDemand" value="7" />7</label>
+          <label><input type="radio" name="attentionDemand" value="8" />8</label>
+          <label><input type="radio" name="attentionDemand" value="9" />9</label>
+          <label><input type="radio" name="attentionDemand" value="10" />10</label>
+
+          <span>매우 촉박함</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>3-4. 본인이 생각하기에 주어진 과업(2048 게임 플레이 및 알림 내용 파악)을 얼마나 성공적으로 완수했다고 생각하십니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row likert-row likert-row-seven">
+          <span>매우 성공하지 않음</span>
+
+          <label><input type="radio" name="taskSuccess" value="1" required />1</label>
+          <label><input type="radio" name="taskSuccess" value="2" />2</label>
+          <label><input type="radio" name="taskSuccess" value="3" />3</label>
+          <label><input type="radio" name="taskSuccess" value="4" />4</label>
+          <label><input type="radio" name="taskSuccess" value="5" />5</label>
+          <label><input type="radio" name="taskSuccess" value="6" />6</label>
+          <label><input type="radio" name="taskSuccess" value="7" />7</label>
+          <label><input type="radio" name="taskSuccess" value="8" />8</label>
+          <label><input type="radio" name="taskSuccess" value="9" />9</label>
+          <label><input type="radio" name="taskSuccess" value="10" />10</label>
+
+          <span>매우 성공함</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>3-5. 주어진 과업(게임과 알림 인지)을 통해 성과를 내기 위해 정신적으로나 육체적으로나 얼마나 노력해야 했습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row likert-row likert-row-seven">
+          <span>매우 아니다</span>
+
+          <label><input type="radio" name="efffort" value="1" required />1</label>
+          <label><input type="radio" name="efffort" value="2" />2</label>
+          <label><input type="radio" name="efffort" value="3" />3</label>
+          <label><input type="radio" name="efffort" value="4" />4</label>
+          <label><input type="radio" name="efffort" value="5" />5</label>
+          <label><input type="radio" name="efffort" value="6" />6</label>
+          <label><input type="radio" name="efffort" value="7" />7</label>
+          <label><input type="radio" name="efffort" value="8" />8</label>
+          <label><input type="radio" name="efffort" value="9" />9</label>
+          <label><input type="radio" name="efffort" value="10" />10</label>
+
+          <span>매우 그렇다</span>
+        </div>
+      </div>
+
+      <div class="likert-question">
+        <p>
+          <strong>3-6. 주어진 과업(게임과 알림 인지)을 수행하면서 얼마나 짜증, 스트레스, 불쾌감을 느꼈습니까?</strong>
+          <span style="color: #ef4444;">*</span>
+        </p>
+
+        <div class="radio-row likert-row likert-row-seven">
+          <span>매우 아니다</span>
+
+          <label><input type="radio" name="stress" value="1" required />1</label>
+          <label><input type="radio" name="stress" value="2" />2</label>
+          <label><input type="radio" name="stress" value="3" />3</label>
+          <label><input type="radio" name="stress" value="4" />4</label>
+          <label><input type="radio" name="stress" value="5" />5</label>
+          <label><input type="radio" name="stress" value="6" />6</label>
+          <label><input type="radio" name="stress" value="7" />7</label>
+          <label><input type="radio" name="stress" value="8" />8</label>
+          <label><input type="radio" name="stress" value="9" />9</label>
+          <label><input type="radio" name="stress" value="10" />10</label>
+
+          <span>매우 그렇다</span>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+/* 설문 제출 */
+
+recallForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(recallForm);
+
+  // 사후 설문 응답 저장
+  surveyResponses = {
+    freeRecallText: formData.get("freeRecallText") || "",
+    colorRecallText: formData.get("colorRecallText") || "",
+    memoryReasonCause: formData.get("memoryReasonCause") || "",
+    memoryReasonDetail: formData.get("memoryReasonDetail") || "",
+    mostNoticeableColor: formData.get("mostNoticeableColor") || "",
+    colorReasonDetail: formData.get("colorReasonDetail") || "",
+    colorMemoryHelp: formData.get("colorMemoryHelp") || "",
+    colorChoiceReason: formData.get("colorChoiceReason") || "",
+    mentalEffort: formData.get("mentalEffort") || "",
+    timePressure: formData.get("timePressure") || "",
+    attentionDemand: formData.get("attentionDemand") || "",
+    taskSuccess: formData.get("taskSuccess") || "",
+    efffort: formData.get("efffort") || "",
+    stress: formData.get("stress") || ""
+  };
+
+  // Google Apps Script로 보낼 전체 데이터
+  const payload = {
+    participantInfo: participantInfo,
+    surveyResponses: surveyResponses,
+    shownNotifications: shownNotifications,
+    score: score
+  };
+
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbxnyHTFfSTXieRO52U31ZQdzzVTWDbIJnBQl6bAnsl-5W4T2y-yEB2hlbtEwgeE4TEy/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    createSummary();
+    showScreen(resultScreen);
+
+  } catch (error) {
+    console.error("전송 에러:", error);
+
+    alert("결과 전송 중 오류가 발생했습니다. 관리자에게 알려주세요.");
+
+    createSummary();
+    showScreen(resultScreen);
+  }
+});
+
+/* ==============================
+   결과 요약 생성
+   ============================== */
+
+function createSummary() {
+  summaryBox.innerHTML = `
+    <strong>사후 설문 응답이 저장되었습니다.</strong><br />
+    참가자가 자유 회상, 색상 회상, 테두리 색상 인식, 주관적 인지 부하 평가에 응답했습니다.<br />
+    아래 버튼을 눌러 CSV 파일로 저장할 수 있습니다.
+  `;
+}
+
+/* =========================================================
    CSV 다운로드
    ========================================================= */
 
@@ -769,15 +1206,18 @@ function downloadCSV() {
     "experimentDate",
     "freeRecallText",
     "colorRecallText",
-    "memoryReason",
+    "memoryReasonCause",
+    "memoryReasonDetail",
     "mostNoticeableColor",
-    "mostNoticeableOther",
+    "colorReasonDetail",
     "colorMemoryHelp",
     "colorChoiceReason",
     "mentalEffort",
     "timePressure",
     "attentionDemand",
-    "taskSuccess"
+    "taskSuccess",
+    "efffort",
+    "stress"
   ];
 
   const row = [
@@ -787,15 +1227,18 @@ function downloadCSV() {
     participantInfo.experimentDate,
     surveyResponses.freeRecallText,
     surveyResponses.colorRecallText,
-    surveyResponses.memoryReason,
+    surveyResponses.memoryReasonCause,
+    surveyResponses.memoryReasonDetail,
     surveyResponses.mostNoticeableColor,
-    surveyResponses.mostNoticeableOther,
+    surveyResponses.colorReasonDetail,
     surveyResponses.colorMemoryHelp,
     surveyResponses.colorChoiceReason,
     surveyResponses.mentalEffort,
     surveyResponses.timePressure,
     surveyResponses.attentionDemand,
-    surveyResponses.taskSuccess
+    surveyResponses.taskSuccess,
+    surveyResponses.efffort,
+    surveyResponses.stress
   ];
 
   const csvContent = [
