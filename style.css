@@ -1068,7 +1068,8 @@ textarea:focus {
   }
 }
 
-/* 방해 금지 모드 강조 */
+
+/* 방해 금지 모드 글씨 강조 */
 .dnd-text {
   color: #dc2626;
   font-weight: 900;
