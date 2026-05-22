@@ -13,7 +13,7 @@
    실험 설정값
    ============================== */
 // 게임 시간: 4분 = 240초
-const EXPERIMENT_SECONDS = 240;
+const EXPERIMENT_SECONDS = 1;
 
 // 알림은 5초 동안 화면에 표시
 const NOTIFICATION_VISIBLE_MS = 5000;
@@ -33,7 +33,8 @@ const MIN_NOTIFICATION_TIME = 30;
 const NOTIFICATION_END_TIME = 180;
 
 // 마지막 알림도 180초 전에 사라지도록 최대 표시 시점 설정
-const MAX_NOTIFICATION_TIME = NOTIFICATION_END_TIME - NOTIFICATION_VISIBLE_SECONDS;
+const MAX_NOTIFICATION_TIME =
+  NOTIFICATION_END_TIME - NOTIFICATION_VISIBLE_SECONDS;
 
 /* ==============================
    DOM 요소
@@ -69,6 +70,7 @@ const guideAgreeCheck = document.getElementById("guideAgreeCheck");
 const guideNextBtns = document.querySelectorAll(".guide-next-btn");
 const guidePrevBtns = document.querySelectorAll(".guide-prev-btn");
 const guidePages = document.querySelectorAll(".guide-page");
+
 /* ==============================
    실험 데이터 저장 변수
    ============================== */
@@ -104,7 +106,7 @@ const highImportanceMessages = [
   "오늘 15시 수업 휴강 안내 및 보강 일정을 확인하세요.",
   "급한 일이니 메시지 확인하는 대로 집으로 바로 전화해라.",
   "2026-1학기 중간고사 성적 조회가 현재 가능합니다. 점수를 확인하세요.",
-  "오늘 저녁 7시 정기 총회 장소가 [공학관 201호]로 변경되었습니다."
+  "오늘 저녁 7시 정기 총회 장소가 [공학관 201호]로 변경되었습니다.",
 ];
 
 const lowImportanceMessages = [
@@ -113,7 +115,7 @@ const lowImportanceMessages = [
   "ruwon님이 회원님의 게시물을 좋아합니다.",
   "야식 출출하지 않으세요? 지금 주문하면 배달비 0원 쿠폰이 즉시 지급!",
   "건조한 날씨로 산불이 발생할 위험이 높습니다.",
-  "지금 만보기 미션 완료! 10000원을 받으러 아래 버튼을 클릭하세요."
+  "지금 만보기 미션 완료! 10000원을 받으러 아래 버튼을 클릭하세요.",
 ];
 
 /* ==============================
@@ -121,7 +123,13 @@ const lowImportanceMessages = [
    ============================== */
 
 function showScreen(screen) {
-  [guideScreen, startScreen, experimentScreen, surveyScreen, resultScreen].forEach((s) => {
+  [
+    guideScreen,
+    startScreen,
+    experimentScreen,
+    surveyScreen,
+    resultScreen,
+  ].forEach((s) => {
     s.classList.remove("active");
   });
 
@@ -138,8 +146,6 @@ function shuffleArray(array) {
     .sort((a, b) => a.random - b.random)
     .map((item) => item.value);
 }
-
-
 
 /* ==============================
    사전 안내 페이지 전환
@@ -158,7 +164,7 @@ function showGuidePage(pageNumber) {
 
   window.scrollTo({
     top: 0,
-    behavior: "smooth"
+    behavior: "smooth",
   });
 }
 
@@ -193,7 +199,6 @@ guideConfirmBtn.addEventListener("click", () => {
   showScreen(startScreen);
 });
 
-
 /* ==============================
    참가자 정보 입력 후 실험 시작
    ============================== */
@@ -205,7 +210,7 @@ participantForm.addEventListener("submit", (event) => {
     participantId: document.getElementById("participantId").value.trim(),
     age: document.getElementById("age").value,
     gender: document.getElementById("gender").value,
-    experimentDate: new Date().toLocaleString()
+    experimentDate: new Date().toLocaleString(),
   };
 
   startExperiment();
@@ -261,7 +266,7 @@ function createNotificationSchedule() {
   // 알림 테두리 색상
   const colors = ["red", "green", "blue"];
 
-  // 5개 알림에 색상을 최대한 고르게 배정하는 함수
+  // 알림에 색상을 최대한 고르게 배정하는 함수
   function createBalancedColors(count) {
     const result = [];
 
@@ -275,36 +280,40 @@ function createNotificationSchedule() {
   const highColors = createBalancedColors(highImportanceMessages.length);
   const lowColors = createBalancedColors(lowImportanceMessages.length);
 
-  // 중요 알림 5개 생성
-  const highNotifications = shuffleArray(highImportanceMessages).map((message, index) => {
-    return {
-      color: highColors[index],
-      importance: "high",
-      message
-    };
-  });
+  // 중요 알림 생성
+  const highNotifications = shuffleArray(highImportanceMessages).map(
+    (message, index) => {
+      return {
+        color: highColors[index],
+        importance: "high",
+        message,
+      };
+    },
+  );
 
-  // 비중요 알림 5개 생성
-  const lowNotifications = shuffleArray(lowImportanceMessages).map((message, index) => {
-    return {
-      color: lowColors[index],
-      importance: "low",
-      message
-    };
-  });
+  // 비중요 알림 생성
+  const lowNotifications = shuffleArray(lowImportanceMessages).map(
+    (message, index) => {
+      return {
+        color: lowColors[index],
+        importance: "low",
+        message,
+      };
+    },
+  );
 
-  // 중요 5개 + 비중요 5개를 합친 뒤 순서 랜덤화
+  // 중요 알림 + 비중요 알림을 합친 뒤 순서 랜덤화
   const baseConditions = shuffleArray([
     ...highNotifications,
-    ...lowNotifications
+    ...lowNotifications,
   ]);
 
   const randomTimes = [];
 
-  const availableStart = MIN_NOTIFICATION_TIME; // 30초
-  const availableEnd = MAX_NOTIFICATION_TIME;   // 175초
+  const availableStart = MIN_NOTIFICATION_TIME;
+  const availableEnd = MAX_NOTIFICATION_TIME;
 
-  // 30초 ~ 175초 구간을 알림 10개가 들어갈 수 있도록 나눔
+  // 30초 ~ 175초 구간을 알림 개수만큼 나눔
   const totalRange = availableEnd - availableStart;
   const interval = totalRange / NOTIFICATION_COUNT;
 
@@ -314,7 +323,7 @@ function createNotificationSchedule() {
 
     // 각 구간 안에서 랜덤 시점 선택
     const randomTime = Math.floor(
-      sectionStart + Math.random() * (sectionEnd - sectionStart)
+      sectionStart + Math.random() * (sectionEnd - sectionStart),
     );
 
     randomTimes.push(Math.min(randomTime, availableEnd));
@@ -329,10 +338,11 @@ function createNotificationSchedule() {
       importance: condition.importance,
       message: condition.message,
       showAt: randomTimes[index],
-      displayed: false
+      displayed: false,
     };
   });
 }
+
 /* ==============================
    알림 표시 시점 확인
    ============================== */
@@ -364,7 +374,7 @@ function showNotification(notification, elapsedSeconds) {
   shownNotifications.push({
     ...notification,
     shownAtSecond: elapsedSeconds,
-    shownAtClock: new Date().toLocaleTimeString()
+    shownAtClock: new Date().toLocaleTimeString(),
   });
 
   setTimeout(() => {
@@ -393,7 +403,7 @@ function endExperiment() {
   // 설문 시작 시 화면 맨 위로 이동
   window.scrollTo({
     top: 0,
-    behavior: "smooth"
+    behavior: "smooth",
   });
 }
 
@@ -427,7 +437,7 @@ function renderBoard() {
         tile.classList.add(`tile-${value}`);
 
         const isMerged = mergedPositions.some(
-          (pos) => pos.row === rowIndex && pos.col === colIndex
+          (pos) => pos.row === rowIndex && pos.col === colIndex,
         );
 
         if (isMerged) {
@@ -510,7 +520,7 @@ function mergeLine(line) {
   return {
     line: newLine,
     gainedScore,
-    mergedIndexes
+    mergedIndexes,
   };
 }
 
@@ -738,6 +748,83 @@ boardEl.addEventListener("pointercancel", () => {
    사후 회상 설문
    ========================================================= */
 
+/* 1~10 숫자 눈금 생성 */
+function createScaleNumbers() {
+  return Array.from({ length: 10 }, (_, index) => {
+    return `<span>${index + 1}</span>`;
+  }).join("");
+}
+
+/* 1~10 슬라이더 문항 생성 */
+function createRangeQuestion({
+  number,
+  name,
+  title,
+  subText,
+  leftText,
+  rightText,
+}) {
+  return `
+    <div class="likert-question range-question">
+      <p>
+        <strong>${number}. ${title}</strong>
+        <span style="color: #ef4444;">*</span>
+      </p>
+
+      ${
+        subText
+          ? `<p class="description" style="margin: 6px 0 14px;">${subText}</p>`
+          : ""
+      }
+
+      <div class="range-score-top">
+        <span>${leftText}</span>
+
+        <strong>
+          현재 선택:
+          <span class="range-value" data-range-value-for="${name}">5</span>점
+        </strong>
+
+        <span>${rightText}</span>
+      </div>
+
+      <input
+        type="range"
+        name="${name}"
+        class="survey-range"
+        min="1"
+        max="10"
+        step="1"
+        value="5"
+        required
+      />
+
+      <div class="range-scale">
+        ${createScaleNumbers()}
+      </div>
+    </div>
+  `;
+}
+
+/* 슬라이더 움직일 때 현재 점수 표시 업데이트 */
+function initSurveyRangeSliders() {
+  const ranges = document.querySelectorAll(".survey-range");
+
+  ranges.forEach((range) => {
+    const valueText = document.querySelector(
+      `.range-value[data-range-value-for="${range.name}"]`,
+    );
+
+    if (!valueText) return;
+
+    valueText.textContent = range.value;
+
+    range.addEventListener("input", () => {
+      valueText.textContent = range.value;
+    });
+  });
+}
+
 function createRecallSurvey() {
   surveyList.innerHTML = "";
 
@@ -811,9 +898,7 @@ function createRecallSurvey() {
           <input type="radio" name="memoryReasonCause" value="둘 다" />
           둘 다
         </label>
-
       </div>
-
     </div>
 
     <div class="survey-item">
@@ -884,69 +969,15 @@ function createRecallSurvey() {
     </div>
 
     <div class="survey-item">
-      <p>
-        <strong>2-5. 응답한 색상이 얼마나 기억(회상)에 도움을 준 것 같습니까?</strong>
-        <span style="color: #ef4444;">*</span>
-      </p>
-
-      <div class="likert-question">
-        <div class="radio-row likert-row">
-          <span>매우 아니다</span>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="1" required />
-            1
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="2" />
-            2
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="3" />
-            3
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="4" />
-            4
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="5" />
-            5
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="1" required />
-            6
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="2" />
-            7
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="3" />
-            8
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="4" />
-            9
-          </label>
-
-          <label>
-            <input type="radio" name="colorMemoryHelp" value="5" />
-            10
-          </label>         
-
-          <span>매우 그렇다</span>
-        </div>
-      </div>
-    </div>
+  ${createRangeQuestion({
+    number: "2-5",
+    name: "colorMemoryHelp",
+    title: "응답한 색상이 얼마나 기억(회상)에 도움을 준 것 같습니까?",
+    subText: "",
+    leftText: "매우 아니다",
+    rightText: "매우 그렇다",
+  })}
+</div>
 
     <div class="survey-item">
       <p>
@@ -969,161 +1000,83 @@ function createRecallSurvey() {
       <p class="eyebrow">Subjective Cognitive Load</p>
       <h3 style="margin: 0 0 10px;">주관적 인지 부하 평가</h3>
 
-      <div class="likert-question">
-        <p>
-          <strong>3-1. 게임하면서 알림 내용을 함께 인지하기 위해 얼마나 많은 정신적, 지각적 활동이 요구되었습니까?
-그 과제는 쉬웠습니까, 어려웠습니까? 단순했습니까, 복잡했습니까?</strong>
-          <span style="color: #ef4444;">*</span>
-        </p>
+      ${createRangeQuestion({
+        number: "3-1",
+        name: "mentalEffort",
+        title:
+          "게임하면서 알림 내용을 함께 인지하기 위해 얼마나 많은 정신적, 지각적 활동이 요구되었습니까?",
+        subText:
+          "그 과제는 쉬웠습니까, 어려웠습니까? 단순했습니까, 복잡했습니까?",
+        leftText: "매우 쉬움",
+        rightText: "매우 어려움",
+      })}
 
-        <div class="radio-row likert-row likert-row-seven">
-          <span>매우 쉬움</span>
+      ${createRangeQuestion({
+        number: "3-2",
+        name: "timePressure",
+        title: "게임하면서 얼마나 많은 신체 활동이 필요했습니까?",
+        subText:
+          "그 일은 쉬웠습니까, 어려웠습니까? 느긋했습니까, 아니면 힘들었습니까?",
+        leftText: "매우 쉬움",
+        rightText: "매우 어려움",
+      })}
 
-          <label><input type="radio" name="mentalEffort" value="1" required />1</label>
-          <label><input type="radio" name="mentalEffort" value="2" />2</label>
-          <label><input type="radio" name="mentalEffort" value="3" />3</label>
-          <label><input type="radio" name="mentalEffort" value="4" />4</label>
-          <label><input type="radio" name="mentalEffort" value="5" />5</label>
-          <label><input type="radio" name="mentalEffort" value="6" />6</label>
-          <label><input type="radio" name="mentalEffort" value="7" />7</label>
-          <label><input type="radio" name="mentalEffort" value="8" />8</label>
-          <label><input type="radio" name="mentalEffort" value="9" />9</label>
-          <label><input type="radio" name="mentalEffort" value="10" />10</label>
+      ${createRangeQuestion({
+        number: "3-3",
+        name: "attentionDemand",
+        title:
+          "게임을 하면서 알림을 확인할 때 시간적 압박을 얼마나 느꼈습니까?",
+        subText: "진행 속도는 느렸습니까, 아니면 빨랐습니까?",
+        leftText: "전혀 촉박하지 않음",
+        rightText: "매우 촉박함",
+      })}
 
-          <span>매우 어려움</span>
-        </div>
-      </div>
+      ${createRangeQuestion({
+        number: "3-4",
+        name: "taskSuccess",
+        title:
+          "본인이 생각하기에 주어진 과업(2048 게임 플레이 및 알림 내용 파악)을 얼마나 성공적으로 완수했다고 생각하십니까?",
+        subText: "",
+        leftText: "매우 성공하지 않음",
+        rightText: "매우 성공함",
+      })}
 
-      <div class="likert-question">
-        <p>
-          <strong>3-2. 게임하면서 얼마나 많은 신체 활동이 필요했습니까?
-그 일은 쉬웠습니까, 어려웠습니까? 느긋했습니까, 아니면 힘들었습니까?</strong>
-          <span style="color: #ef4444;">*</span>
-        </p>
+      ${createRangeQuestion({
+        number: "3-5",
+        name: "efffort",
+        title:
+          "주어진 과업(게임과 알림 인지)을 통해 성과를 내기 위해 정신적으로나 육체적으로나 얼마나 노력해야 했습니까?",
+        subText: "",
+        leftText: "매우 아니다",
+        rightText: "매우 그렇다",
+      })}
 
-        <div class="radio-row likert-row likert-row-seven">
-          <span>매우 쉬움</span>
-
-          <label><input type="radio" name="timePressure" value="1" required />1</label>
-          <label><input type="radio" name="timePressure" value="2" />2</label>
-          <label><input type="radio" name="timePressure" value="3" />3</label>
-          <label><input type="radio" name="timePressure" value="4" />4</label>
-          <label><input type="radio" name="timePressure" value="5" />5</label>
-          <label><input type="radio" name="timePressure" value="6" />6</label>
-          <label><input type="radio" name="timePressure" value="7" />7</label>
-          <label><input type="radio" name="timePressure" value="8" />8</label>
-          <label><input type="radio" name="timePressure" value="9" />9</label>
-          <label><input type="radio" name="timePressure" value="10" />10</label>          
-
-          <span>매우 어려움</span>
-        </div>
-      </div>
-
-      <div class="likert-question">
-        <p>
-          <strong>3-3. 게임을 하면서 알림을 확인할 때 시간적 압박을 얼마나 느꼈습니까?
-진행 속도는 느렸습니까, 아니면 빨랐습니까?</strong>
-          <span style="color: #ef4444;">*</span>
-        </p>
-
-        <div class="radio-row likert-row likert-row-seven">
-          <span>전혀 촉박하지 않음</span>
-
-          <label><input type="radio" name="attentionDemand" value="1" required />1</label>
-          <label><input type="radio" name="attentionDemand" value="2" />2</label>
-          <label><input type="radio" name="attentionDemand" value="3" />3</label>
-          <label><input type="radio" name="attentionDemand" value="4" />4</label>
-          <label><input type="radio" name="attentionDemand" value="5" />5</label>
-          <label><input type="radio" name="attentionDemand" value="6" />6</label>
-          <label><input type="radio" name="attentionDemand" value="7" />7</label>
-          <label><input type="radio" name="attentionDemand" value="8" />8</label>
-          <label><input type="radio" name="attentionDemand" value="9" />9</label>
-          <label><input type="radio" name="attentionDemand" value="10" />10</label>
-
-          <span>매우 촉박함</span>
-        </div>
-      </div>
-
-      <div class="likert-question">
-        <p>
-          <strong>3-4. 본인이 생각하기에 주어진 과업(2048 게임 플레이 및 알림 내용 파악)을 얼마나 성공적으로 완수했다고 생각하십니까?</strong>
-          <span style="color: #ef4444;">*</span>
-        </p>
-
-        <div class="radio-row likert-row likert-row-seven">
-          <span>매우 성공하지 않음</span>
-
-          <label><input type="radio" name="taskSuccess" value="1" required />1</label>
-          <label><input type="radio" name="taskSuccess" value="2" />2</label>
-          <label><input type="radio" name="taskSuccess" value="3" />3</label>
-          <label><input type="radio" name="taskSuccess" value="4" />4</label>
-          <label><input type="radio" name="taskSuccess" value="5" />5</label>
-          <label><input type="radio" name="taskSuccess" value="6" />6</label>
-          <label><input type="radio" name="taskSuccess" value="7" />7</label>
-          <label><input type="radio" name="taskSuccess" value="8" />8</label>
-          <label><input type="radio" name="taskSuccess" value="9" />9</label>
-          <label><input type="radio" name="taskSuccess" value="10" />10</label>
-
-          <span>매우 성공함</span>
-        </div>
-      </div>
-
-      <div class="likert-question">
-        <p>
-          <strong>3-5. 주어진 과업(게임과 알림 인지)을 통해 성과를 내기 위해 정신적으로나 육체적으로나 얼마나 노력해야 했습니까?</strong>
-          <span style="color: #ef4444;">*</span>
-        </p>
-
-        <div class="radio-row likert-row likert-row-seven">
-          <span>매우 아니다</span>
-
-          <label><input type="radio" name="efffort" value="1" required />1</label>
-          <label><input type="radio" name="efffort" value="2" />2</label>
-          <label><input type="radio" name="efffort" value="3" />3</label>
-          <label><input type="radio" name="efffort" value="4" />4</label>
-          <label><input type="radio" name="efffort" value="5" />5</label>
-          <label><input type="radio" name="efffort" value="6" />6</label>
-          <label><input type="radio" name="efffort" value="7" />7</label>
-          <label><input type="radio" name="efffort" value="8" />8</label>
-          <label><input type="radio" name="efffort" value="9" />9</label>
-          <label><input type="radio" name="efffort" value="10" />10</label>
-
-          <span>매우 그렇다</span>
-        </div>
-      </div>
-
-      <div class="likert-question">
-        <p>
-          <strong>3-6. 주어진 과업(게임과 알림 인지)을 수행하면서 얼마나 짜증, 스트레스, 불쾌감을 느꼈습니까?</strong>
-          <span style="color: #ef4444;">*</span>
-        </p>
-
-        <div class="radio-row likert-row likert-row-seven">
-          <span>매우 아니다</span>
-
-          <label><input type="radio" name="stress" value="1" required />1</label>
-          <label><input type="radio" name="stress" value="2" />2</label>
-          <label><input type="radio" name="stress" value="3" />3</label>
-          <label><input type="radio" name="stress" value="4" />4</label>
-          <label><input type="radio" name="stress" value="5" />5</label>
-          <label><input type="radio" name="stress" value="6" />6</label>
-          <label><input type="radio" name="stress" value="7" />7</label>
-          <label><input type="radio" name="stress" value="8" />8</label>
-          <label><input type="radio" name="stress" value="9" />9</label>
-          <label><input type="radio" name="stress" value="10" />10</label>
-
-          <span>매우 그렇다</span>
-        </div>
-      </div>
-
+      ${createRangeQuestion({
+        number: "3-6",
+        name: "stress",
+        title:
+          "주어진 과업(게임과 알림 인지)을 수행하면서 얼마나 짜증, 스트레스, 불쾌감을 느꼈습니까?",
+        subText: "",
+        leftText: "매우 아니다",
+        rightText: "매우 그렇다",
+      })}
     </div>
   `;
+
+  initSurveyRangeSliders();
 }
 
 /* 설문 제출 */
 
 recallForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  const submitButton = recallForm.querySelector('button[type="submit"]');
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "결과 저장 중... 약 10초 정도 소요됩니다";
+  }
 
   const formData = new FormData(recallForm);
 
@@ -1142,7 +1095,7 @@ recallForm.addEventListener("submit", async (event) => {
     attentionDemand: formData.get("attentionDemand") || "",
     taskSuccess: formData.get("taskSuccess") || "",
     efffort: formData.get("efffort") || "",
-    stress: formData.get("stress") || ""
+    stress: formData.get("stress") || "",
   };
 
   // Google Apps Script로 보낼 전체 데이터
@@ -1150,22 +1103,24 @@ recallForm.addEventListener("submit", async (event) => {
     participantInfo: participantInfo,
     surveyResponses: surveyResponses,
     shownNotifications: shownNotifications,
-    score: score
+    score: score,
   };
 
   try {
-    await fetch("https://script.google.com/macros/s/AKfycbxnyHTFfSTXieRO52U31ZQdzzVTWDbIJnBQl6bAnsl-5W4T2y-yEB2hlbtEwgeE4TEy/exec", {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbxnyHTFfSTXieRO52U31ZQdzzVTWDbIJnBQl6bAnsl-5W4T2y-yEB2hlbtEwgeE4TEy/exec",
+      {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8",
+        },
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload)
-    });
+    );
 
     createSummary();
     showScreen(resultScreen);
-
   } catch (error) {
     console.error("전송 에러:", error);
 
@@ -1217,7 +1172,7 @@ function downloadCSV() {
     "attentionDemand",
     "taskSuccess",
     "efffort",
-    "stress"
+    "stress",
   ];
 
   const row = [
@@ -1238,18 +1193,16 @@ function downloadCSV() {
     surveyResponses.attentionDemand,
     surveyResponses.taskSuccess,
     surveyResponses.efffort,
-    surveyResponses.stress
+    surveyResponses.stress,
   ];
 
   const csvContent = [
     headers.join(","),
-    row
-      .map((value) => `"${String(value).replaceAll('"', '""')}"`)
-      .join(",")
+    row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(","),
   ].join("\n");
 
   const blob = new Blob(["\uFEFF" + csvContent], {
-    type: "text/csv;charset=utf-8;"
+    type: "text/csv;charset=utf-8;",
   });
 
   const url = URL.createObjectURL(blob);
@@ -1271,8 +1224,10 @@ reshuffleBtn.addEventListener("click", () => {
 });
 
 function continueWithNewBoard() {
-  // 점수와 남은 시간은 유지하고 보드만 새로 시작
+  // 더 이상 이동할 수 없을 때 새 보드로 시작
+  // 점수는 0으로 초기화하고, 남은 실험 시간은 그대로 유지
   board = Array.from({ length: 4 }, () => Array(4).fill(0));
+  score = 0;
   mergedPositions = [];
 
   addRandomTile();
